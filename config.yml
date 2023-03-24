@@ -10,6 +10,6 @@ guild:
   prefix: g.
   lang: japanese
   enabledeepl: false
-  maxtoken: 4096
+  maxtoken: 4095
 user_blacklist:
 - "0000000000000000000"

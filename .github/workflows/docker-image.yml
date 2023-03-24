@@ -23,4 +23,4 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: true
-          tags: ghcr.io/tpc3/duckpolice:latest
+          tags: ghcr.io/tpc3/bocchi-go:latest

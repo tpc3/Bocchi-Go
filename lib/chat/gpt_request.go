@@ -7,7 +7,6 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/bwmarrin/discordgo"
 	"github.com/tpc3/Bocchi-Go/lib/config"
 )
 
@@ -15,7 +14,7 @@ const openai = "https://api.openai.com/v1/chat/completions"
 
 var messages []Message
 
-func GptRequest(session *discordgo.Session, orgMsg *discordgo.MessageCreate, msg *string) string {
+func GptRequest(msg *string) string {
 	apikey := config.CurrentConfig.Chat.ChatToken
 	messages = append(messages, Message{
 		Role:    "user",
@@ -72,10 +71,7 @@ func getOpenAIResponse(apikey *string) string {
 		Content: response.Choices[0].Messages.Content,
 	})
 
-	var result string
-	for _, v := range response.Choices {
-		result = v.Messages.Content
-	}
+	result := response.Choices[0].Messages.Content
 
 	return result
 }

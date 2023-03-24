@@ -33,7 +33,7 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 		content = msg
 	}
 	start := time.Now()
-	response := chat.GptRequest(session, orgMsg, &content)
+	response := chat.GptRequest(&content)
 	exec := time.Since(start).Seconds()
 	dulation := strconv.FormatFloat(exec, 'f', 2, 64)
 	if deepl == "true" {

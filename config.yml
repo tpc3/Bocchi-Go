@@ -4,7 +4,7 @@ discord:
   token: YOUR_TOKEN_HERE
   status: ChatGPT is running! | g.help
 chat:
-  chattoken: YOU
+  chattoken: YOUR_TOKEN_HERE
   deepltoken: YOUR_TOKEN_HERE
 guild:
   prefix: g.

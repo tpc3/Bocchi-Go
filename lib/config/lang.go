@@ -59,11 +59,8 @@ func loadLang() {
 			},
 		},
 		Reply: replystr{
-			ExecTime:     "実行時間: ",
-			Second:       "秒",
-			Deepl:        "DeepL翻訳: ",
-			DeeplEnable:  "有効",
-			DeeplDisable: "無効",
+			ExecTime: "実行時間: ",
+			Second:   "秒",
 		},
 		Error: errorstr{
 			UnknownTitle: "予期せぬエラーが発生しました。",
@@ -89,11 +86,8 @@ func loadLang() {
 			},
 		},
 		Reply: replystr{
-			ExecTime:     "Execution time: ",
-			Second:       "s",
-			Deepl:        "DeepL Translation: ",
-			DeeplEnable:  "Enable",
-			DeeplDisable: "Disable",
+			ExecTime: "Execution time: ",
+			Second:   "s",
 		},
 		Error: errorstr{
 			UnknownTitle: "Unexpected error is occurred.",

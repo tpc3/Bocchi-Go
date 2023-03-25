@@ -35,7 +35,6 @@ func ConfigUsage(session *discordgo.Session, orgMsg *discordgo.MessageCreate, gu
 }
 
 func ConfigCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild config.Guild, message *string) {
-	enabledeepl := strconv.FormatBool(guild.EnableDeepL)
 	maxtoken := strconv.Itoa(guild.MaxToken)
 	split := strings.SplitN(*message, " ", 2)
 	if *message == "" {
@@ -48,10 +47,6 @@ func ConfigCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guil
 		msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{
 			Name:  "lang",
 			Value: guild.Lang,
-		})
-		msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{
-			Name:  "enabledeepl",
-			Value: enabledeepl,
 		})
 		msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{
 			Name:  "maxtoken",
@@ -76,13 +71,6 @@ func ConfigCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guil
 			ErrorReply(session, orgMsg, "unsupported language")
 			return
 		}
-	case "enabledeepl":
-		enabledeepl = split[1]
-		if enabledeepl != "true" && enabledeepl != "false" {
-			ErrorReply(session, orgMsg, config.Lang[guild.Lang].Error.MustBoolean)
-			return
-		}
-		guild.EnableDeepL, _ = strconv.ParseBool(enabledeepl)
 	case "maxtoken":
 		maxtoken = split[1]
 		guild.MaxToken, _ = strconv.Atoi(maxtoken)

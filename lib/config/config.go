@@ -21,15 +21,13 @@ type Config struct {
 }
 
 type Chat struct {
-	ChatToken  string
-	DeepLToken string
+	ChatToken string
 }
 
 type Guild struct {
-	Prefix      string
-	Lang        string
-	EnableDeepL bool
-	MaxToken    int
+	Prefix   string
+	Lang     string
+	MaxToken int
 }
 
 const configFile = "./config.yml"
@@ -105,10 +103,9 @@ func SaveGuild(id *string, guild *Guild) error {
 		return err
 	}
 
-	if guild.Prefix != CurrentConfig.Guild.Prefix || guild.Lang != CurrentConfig.Guild.Lang || guild.EnableDeepL != CurrentConfig.Guild.EnableDeepL || guild.MaxToken != CurrentConfig.Guild.MaxToken {
+	if guild.Prefix != CurrentConfig.Guild.Prefix || guild.Lang != CurrentConfig.Guild.Lang || guild.MaxToken != CurrentConfig.Guild.MaxToken {
 		CurrentConfig.Guild.Prefix = guild.Prefix
 		CurrentConfig.Guild.Lang = guild.Lang
-		CurrentConfig.Guild.EnableDeepL = guild.EnableDeepL
 		CurrentConfig.Guild.MaxToken = guild.MaxToken
 	}
 

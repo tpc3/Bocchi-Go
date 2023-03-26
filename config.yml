@@ -2,7 +2,7 @@ debug: true
 help: https://github.com/tpc3/Bocchi-Go/wiki
 discord:
   token: YOUR_TOKEN_HERE
-  status: ChatGPT is running! | g.help
+  status: ChatGPT is running! | b.help
 chat:
   chattoken: YOUR_TOKEN_HERE
 guild:

@@ -1,7 +1,7 @@
 # Bocchi-Go
 OpenAIAPI on Discord, re-written in discordgo 
 
-# Coder Writer
+# Code Writer
 * [lb-migii](https://github.com/lb-migii)  
 Bocchi used discordpy was rewritten in disocrdgo
 * [Amaototi](https://github.com/Amaototi)  

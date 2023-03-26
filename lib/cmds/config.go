@@ -31,6 +31,10 @@ func ConfigUsage(session *discordgo.Session, orgMsg *discordgo.MessageCreate, gu
 		Name:  "lang <language>",
 		Value: config.Lang[guild.Lang].Usage.Config.Lang,
 	})
+	msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{
+		Name:  "maxtoken <int>",
+		Value: config.Lang[guild.Lang].Usage.Config.MaxToken,
+	})
 	ReplyEmbed(session, orgMsg, msg)
 }
 

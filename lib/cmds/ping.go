@@ -12,4 +12,5 @@ func PingCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 	embedMsg := embed.NewEmbed(session, orgMsg)
 	embedMsg.Title = "Pong!"
 	ReplyEmbed(session, orgMsg, embedMsg)
+	session.MessageReactionAdd(orgMsg.ChannelID, orgMsg.ID, "🏓")
 }

@@ -6,7 +6,7 @@ discord:
 chat:
   chattoken: YOUR_TOKEN_HERE
 guild:
-  prefix: g.
+  prefix: b.
   lang: japanese
   enabledeepl: false
   maxtoken: 4095

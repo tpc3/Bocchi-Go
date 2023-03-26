@@ -27,11 +27,8 @@ type usagestr struct {
 }
 
 type replystr struct {
-	ExecTime     string
-	Second       string
-	Deepl        string
-	DeeplEnable  string
-	DeeplDisable string
+	ExecTime string
+	Second   string
 }
 
 type configusagestr struct {

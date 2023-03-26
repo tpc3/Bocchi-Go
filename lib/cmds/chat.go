@@ -22,7 +22,11 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 	exec := time.Since(start).Seconds()
 	dulation := strconv.FormatFloat(exec, 'f', 2, 64)
 	embedMsg := embed.NewEmbed(session, orgMsg)
-	embedMsg.Title = msg
+	if len(msg) > 30 {
+		embedMsg.Title = msg[:50] + "..."
+	} else {
+		embedMsg.Title = msg
+	}
 	embedMsg.Fields = append(embedMsg.Fields, &discordgo.MessageEmbedField{
 		Value: response,
 	})

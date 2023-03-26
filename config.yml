@@ -5,7 +5,6 @@ discord:
   status: ChatGPT is running! | g.help
 chat:
   chattoken: YOUR_TOKEN_HERE
-  deepltoken: YOUR_TOKEN_HERE
 guild:
   prefix: g.
   lang: japanese

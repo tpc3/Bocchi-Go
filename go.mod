@@ -3,7 +3,6 @@ module github.com/tpc3/Bocchi-Go
 go 1.20
 
 require (
-	github.com/bounoable/deepl v0.5.1
 	github.com/bwmarrin/discordgo v0.27.1
 	gopkg.in/yaml.v2 v2.4.0
 )

@@ -24,6 +24,7 @@ type errorstr struct {
 	SyntaxDesc   string
 	MustBoolean  string
 	MustValue    string
+	LongResponse string
 }
 
 type usagestr struct {
@@ -96,6 +97,7 @@ func loadLang() {
 			SyntaxDesc:   "パラメータの解析に失敗しました。\nコマンドの構文が正しいかお確かめください。",
 			MustBoolean:  "その引数は`true`または`false`である必要があります。",
 			MustValue:    "その引数は`1`から`4095`の範囲の整数である必要があります。",
+			LongResponse: "AIの返答が長すぎました。指示を変更してもう一度お試しください。",
 		},
 	}
 	Lang["english"] = Strings{
@@ -133,6 +135,7 @@ func loadLang() {
 			SyntaxDesc:   "Failed to parse parameter.\nPlease check your command syntax.",
 			MustBoolean:  "That argument must be `true` or `false`.",
 			MustValue:    "That argument must be `1` to `4095` and integer value.",
+			LongResponse: "Too long AI response.Please change the instructions and try again.",
 		},
 	}
 }

@@ -3,6 +3,7 @@ package cmds
 import (
 	"strconv"
 	"time"
+	"unicode/utf8"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/tpc3/Bocchi-Go/lib/chat"
@@ -19,11 +20,14 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 	msg := *param
 	start := time.Now()
 	response := chat.GptRequest(&msg)
+	if utf8.RuneCountInString(response) > 1023 {
+		ErrorReply(session, orgMsg, config.Lang[guild.Lang].Error.LongResponse)
+	}
 	exec := time.Since(start).Seconds()
 	dulation := strconv.FormatFloat(exec, 'f', 2, 64)
 	embedMsg := embed.NewEmbed(session, orgMsg)
-	if len(msg) > 30 {
-		embedMsg.Title = msg[:50] + "..."
+	if utf8.RuneCountInString(msg) > 50 {
+		embedMsg.Title = string([]rune(msg)[:50]) + "..."
 	} else {
 		embedMsg.Title = msg
 	}

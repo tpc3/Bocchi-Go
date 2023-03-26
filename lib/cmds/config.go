@@ -91,7 +91,7 @@ func ConfigCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guil
 		ErrorReply(session, orgMsg, config.Lang[guild.Lang].Error.SubCmd)
 		return
 	}
-	err = config.SaveGuild(&orgMsg.GuildID, &guild)
+	err = config.SaveGuild(&guild)
 	if err != nil {
 		UnknownError(session, orgMsg, &guild.Lang, err)
 		return

@@ -70,28 +70,7 @@ func VerifyGuild(guild *Guild) error {
 	return nil
 }
 
-func LoadGuild(id *string) (*Guild, error) {
-
-	file, err := os.ReadFile(configFile)
-	if os.IsNotExist(err) {
-		return &Guild{
-			Prefix: CurrentConfig.Guild.Prefix,
-			Lang:   CurrentConfig.Guild.Lang,
-		}, nil
-	} else if err != nil {
-		return nil, err
-	}
-
-	var guild Guild
-	err = yaml.Unmarshal(file, &guild)
-	if err != nil {
-		return nil, err
-	}
-
-	return &guild, nil
-}
-
-func SaveGuild(id *string, guild *Guild) error {
+func SaveGuild(guild *Guild) error {
 	file, err := os.ReadFile(configFile)
 	if err != nil {
 		return err

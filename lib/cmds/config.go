@@ -64,13 +64,18 @@ func ConfigCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guil
 		return
 	}
 	ok := false
+	var key, item string
 	switch split[0] {
 	case "prefix":
 		guild.Prefix = split[1]
+		key = config.Lang[guild.Lang].Config.Item.Prefix
+		item = guild.Prefix
 	case "lang":
 		_, ok = config.Lang[split[1]]
 		if ok {
 			guild.Lang = split[1]
+			key = config.Lang[guild.Lang].Config.Item.Lang
+			item = guild.Lang
 		} else {
 			ErrorReply(session, orgMsg, "unsupported language")
 			return
@@ -82,6 +87,8 @@ func ConfigCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guil
 			ErrorReply(session, orgMsg, config.Lang[guild.Lang].Error.MustValue)
 			return
 		}
+		key = config.Lang[guild.Lang].Config.Item.Maxtoken
+		item = maxtoken
 	default:
 		ConfigUsage(session, orgMsg, &guild, errors.New("item not found"))
 		return
@@ -97,4 +104,11 @@ func ConfigCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guil
 		return
 	}
 	session.MessageReactionAdd(orgMsg.ChannelID, orgMsg.ID, "👍")
+	msg := embed.NewEmbed(session, orgMsg)
+	msg.Title = config.Lang[guild.Lang].Config.Title
+	msg.Color = embed.ColorGPT
+	msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{
+		Value: key + item + config.Lang[guild.Lang].Config.Announce,
+	})
+	ReplyEmbed(session, orgMsg, msg)
 }

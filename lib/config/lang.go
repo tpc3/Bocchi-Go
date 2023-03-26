@@ -9,6 +9,7 @@ type Strings struct {
 	Help     string
 	CurrConf string
 	Usage    usagestr
+	Config   configstr
 	Reply    replystr
 	Error    errorstr
 }
@@ -28,6 +29,18 @@ type errorstr struct {
 type usagestr struct {
 	Title  string
 	Config configusagestr
+}
+
+type configstr struct {
+	Title    string
+	Announce string
+	Item     itemstr
+}
+
+type itemstr struct {
+	Prefix   string
+	Lang     string
+	Maxtoken string
 }
 
 type replystr struct {
@@ -61,6 +74,15 @@ func loadLang() {
 				MaxToken: "使用する最大トークン数を指定します。デフォルトは`" + strconv.Itoa(CurrentConfig.Guild.MaxToken) + "`です。",
 			},
 		},
+		Config: configstr{
+			Title:    "設定の更新",
+			Announce: "\"に更新しました。",
+			Item: itemstr{
+				Prefix:   "Prefixを\"",
+				Lang:     "botの使用言語を\"",
+				Maxtoken: "botが使用するトークンの最大値を\"",
+			},
+		},
 		Reply: replystr{
 			ExecTime: "実行時間: ",
 			Second:   "秒",
@@ -87,6 +109,15 @@ func loadLang() {
 				Prefix:   "Specify command prefix.\nDefaults to `" + CurrentConfig.Guild.Prefix + "`",
 				Lang:     "Specify language.\nDefaults to `" + CurrentConfig.Guild.Lang + "`",
 				MaxToken: "Specify MaxTokens.\nDefaults to `" + strconv.Itoa(CurrentConfig.Guild.MaxToken) + "`",
+			},
+		},
+		Config: configstr{
+			Title:    "Config Update",
+			Announce: "\".",
+			Item: itemstr{
+				Prefix:   "Prefix to \"",
+				Lang:     "Language for used by bot to\"",
+				Maxtoken: "Max Tokens for used by bot for\"",
 			},
 		},
 		Reply: replystr{

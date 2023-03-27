@@ -19,7 +19,7 @@ const (
 func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild *config.Guild, param *string) {
 	msg := *param
 	start := time.Now()
-	response := chat.GptRequest(&msg)
+	response, coststr := chat.GptRequest(guild, &msg)
 	if utf8.RuneCountInString(response) > 1023 {
 		ErrorReply(session, orgMsg, config.Lang[guild.Lang].Error.LongResponse)
 	}
@@ -37,7 +37,7 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 	exectimetext := config.Lang[guild.Lang].Reply.ExecTime
 	second := config.Lang[guild.Lang].Reply.Second
 	embedMsg.Footer = &discordgo.MessageEmbedFooter{
-		Text: exectimetext + dulation + second,
+		Text: exectimetext + dulation + second + "\n" + config.Lang[guild.Lang].Reply.Cost + coststr,
 	}
 	GPTReplyEmbed(session, orgMsg, embedMsg)
 }

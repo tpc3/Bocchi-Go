@@ -12,22 +12,22 @@ import (
 
 const openai = "https://api.openai.com/v1/chat/completions"
 
-var messages []Message
-
 func GptRequest(msg *string) string {
 	apikey := config.CurrentConfig.Chat.ChatToken
-	messages = append(messages, Message{
-		Role:    "user",
-		Content: *msg,
-	})
-	response := getOpenAIResponse(&apikey)
+	messages := []Message{
+		{
+			Role:    "user",
+			Content: *msg,
+		},
+	}
+	response := getOpenAIResponse(&apikey, &messages)
 	return response
 }
 
-func getOpenAIResponse(apikey *string) string {
+func getOpenAIResponse(apikey *string, messages *[]Message) string {
 	requestBody := OpenaiRequest{
 		Model:    "gpt-3.5-turbo",
-		Messages: messages,
+		Messages: *messages,
 	}
 
 	requestJSON, err := json.Marshal(requestBody)
@@ -65,11 +65,6 @@ func getOpenAIResponse(apikey *string) string {
 	if err != nil {
 		log.Fatal("Unmarshaling json error: ", err)
 	}
-
-	messages = append(messages, Message{
-		Role:    "assistant",
-		Content: response.Choices[0].Messages.Content,
-	})
 
 	result := response.Choices[0].Messages.Content
 

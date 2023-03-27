@@ -47,6 +47,7 @@ type itemstr struct {
 type replystr struct {
 	ExecTime string
 	Second   string
+	Cost     string
 }
 
 type configusagestr struct {
@@ -87,6 +88,7 @@ func loadLang() {
 		Reply: replystr{
 			ExecTime: "実行時間: ",
 			Second:   "秒",
+			Cost:     "このチャットで使用された料金: ¥",
 		},
 		Error: errorstr{
 			UnknownTitle: "予期せぬエラーが発生しました。",
@@ -125,6 +127,7 @@ func loadLang() {
 		Reply: replystr{
 			ExecTime: "Execution time: ",
 			Second:   "s",
+			Cost:     "Fees used in this chat: $",
 		},
 		Error: errorstr{
 			UnknownTitle: "Unexpected error is occurred.",

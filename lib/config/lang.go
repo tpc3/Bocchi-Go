@@ -117,11 +117,11 @@ func loadLang() {
 		},
 		Config: configstr{
 			Title:    "Config Update",
-			Announce: "\".",
+			Announce: " \".",
 			Item: itemstr{
 				Prefix:   "Prefix to \"",
-				Lang:     "Language for used by bot to\"",
-				Maxtoken: "Max Tokens for used by bot for\"",
+				Lang:     "Language used by bot for \"",
+				Maxtoken: "Max Tokens used by bot for \"",
 			},
 		},
 		Reply: replystr{

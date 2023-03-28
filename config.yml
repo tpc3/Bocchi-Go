@@ -7,7 +7,6 @@ chat:
 guild:
   prefix: b.
   lang: japanese
-  enabledeepl: false
   maxtoken: 4095
 user_blacklist:
 - "0000000000000000000"

@@ -4,7 +4,7 @@ Discord Bot for using OpenAIAPI on Discord, re-written in discordgo
 
 ## Use
 ### Docker
-1. [Download config.yml](https://raw.githubusercontent.com/tpc3/Bocchi-Go/master/config.yml)
+1. [Download config.yml](https://raw.githubusercontent.com/tpc3/Bocchi-Go/main/config.yml?token=GHSAT0AAAAAAB7LP2NPYU7ZZL4PNTPPO5JOZBCQZ3Q)
 1. Enter your token to config.yml
 1. `docker run --rm -it -v $(PWD):/data ghcr.io/tpc3/bocchi-go`
 
@@ -19,9 +19,9 @@ https://discord.com/api/oauth2/authorize?client_id=XXXXXXXXXXXXXXXXXXX&permissio
 - golang
 
 ## Code Writer
-* [lb-migii](https://github.com/lb-migii)  
-Bocchi used discordpy was rewritten in disocrdgo
-* [Amaototi](https://github.com/Amaototi)  
+* [lb-migii](https://github.com/lb-migii)
+Bocchi used discordpy was rewritten in discordgo
+* [Amaototi](https://github.com/Amaototi)
 [Original Bocchi](https://github.com/tpc3/Bocchi) written in discordpy using ChatGPT-4
 
 ## Why Bocchi

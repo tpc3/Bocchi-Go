@@ -4,15 +4,18 @@ import (
 	"bytes"
 	"encoding/json"
 	"io"
+	"io/ioutil"
 	"log"
+	"math"
 	"net/http"
+	"strconv"
 
 	"github.com/tpc3/Bocchi-Go/lib/config"
 )
 
 const openai = "https://api.openai.com/v1/chat/completions"
 
-func GptRequest(msg *string) string {
+func GptRequest(guild *config.Guild, msg *string) (string, string) {
 	apikey := config.CurrentConfig.Chat.ChatToken
 	messages := []Message{
 		{
@@ -20,11 +23,11 @@ func GptRequest(msg *string) string {
 			Content: *msg,
 		},
 	}
-	response := getOpenAIResponse(&apikey, &messages)
-	return response
+	response, coststr := getOpenAIResponse(guild, &apikey, &messages)
+	return response, coststr
 }
 
-func getOpenAIResponse(apikey *string, messages *[]Message) string {
+func getOpenAIResponse(guild *config.Guild, apikey *string, messages *[]Message) (string, string) {
 	requestBody := OpenaiRequest{
 		Model:    "gpt-3.5-turbo",
 		Messages: *messages,
@@ -67,6 +70,36 @@ func getOpenAIResponse(apikey *string, messages *[]Message) string {
 	}
 
 	result := response.Choices[0].Messages.Content
+	tokens := response.Usages.TotalTokens
+	cost := calculationCost(tokens, guild)
 
-	return result
+	return result, cost
+}
+
+func calculationCost(tokens int, guild *config.Guild) string {
+	rate := getRate(guild)
+	cost := math.Floor(float64(tokens)*0.00002*rate*100+0.5) / 100
+	return strconv.FormatFloat(cost, 'f', 2, 64)
+}
+
+func getRate(guild *config.Guild) float64 {
+	if config.Lang[guild.Lang].Lang == "japanese" {
+		url := "https://api.excelapi.org/currency/rate?pair=usd-jpy"
+		resp, err := http.Get(url)
+		if err != nil {
+			log.Fatal("Sending http request error: ", err)
+		}
+		defer resp.Body.Close()
+		byteArray, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			log.Fatal("Reading body error: ", err)
+		}
+		rate, err := strconv.ParseFloat(string(byteArray), 64)
+		if err != nil {
+			log.Fatal("Parsing rate error: ", err)
+		}
+		return rate
+	} else {
+		return 1
+	}
 }

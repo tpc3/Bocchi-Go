@@ -11,16 +11,24 @@ import (
 	"github.com/tpc3/Bocchi-Go/lib/embed"
 )
 
-const (
-	Chat      = "chat"
-	parameter = "-t "
-)
+const Chat = "chat"
 
 func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild *config.Guild, param *string) {
 	msg := *param
+	if msg == "" {
+		ErrorReply(session, orgMsg, config.Lang[config.CurrentConfig.Guild.Lang].Error.SubCmd)
+		return
+	}
 	start := time.Now()
+	session.MessageReactionAdd(orgMsg.ChannelID, orgMsg.ID, "🤔")
+	typing := make(chan int)
+	go func() {
+		session.ChannelTyping(orgMsg.ChannelID)
+		typing <- 1
+	}()
 	response, coststr := chat.GptRequest(guild, &msg)
-	if utf8.RuneCountInString(response) > 1023 {
+	<-typing
+	if utf8.RuneCountInString(response) > 4096 {
 		ErrorReply(session, orgMsg, config.Lang[guild.Lang].Error.LongResponse)
 	}
 	exec := time.Since(start).Seconds()
@@ -31,13 +39,12 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 	} else {
 		embedMsg.Title = msg
 	}
-	embedMsg.Fields = append(embedMsg.Fields, &discordgo.MessageEmbedField{
-		Value: response,
-	})
+	embedMsg.Description = response
 	exectimetext := config.Lang[guild.Lang].Reply.ExecTime
 	second := config.Lang[guild.Lang].Reply.Second
 	embedMsg.Footer = &discordgo.MessageEmbedFooter{
 		Text: exectimetext + dulation + second + "\n" + config.Lang[guild.Lang].Reply.Cost + coststr,
 	}
+	session.MessageReactionRemove(orgMsg.ChannelID, orgMsg.ID, "🤔", session.State.User.ID)
 	GPTReplyEmbed(session, orgMsg, embedMsg)
 }

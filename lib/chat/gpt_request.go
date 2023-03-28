@@ -4,9 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"io"
-	"io/ioutil"
 	"log"
-	"math"
 	"net/http"
 	"strconv"
 
@@ -78,8 +76,8 @@ func getOpenAIResponse(guild *config.Guild, apikey *string, messages *[]Message)
 
 func calculationCost(tokens int, guild *config.Guild) string {
 	rate := getRate(guild)
-	cost := math.Floor(float64(tokens)*0.00002*rate*100+0.5) / 100
-	return strconv.FormatFloat(cost, 'f', 2, 64)
+	cost := (float64(tokens) / 1000) * 0.002 * rate
+	return strconv.FormatFloat(cost, 'f', 10, 64)
 }
 
 func getRate(guild *config.Guild) float64 {
@@ -90,7 +88,7 @@ func getRate(guild *config.Guild) float64 {
 			log.Fatal("Sending http request error: ", err)
 		}
 		defer resp.Body.Close()
-		byteArray, err := ioutil.ReadAll(resp.Body)
+		byteArray, err := io.ReadAll(resp.Body)
 		if err != nil {
 			log.Fatal("Reading body error: ", err)
 		}

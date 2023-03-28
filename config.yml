@@ -8,5 +8,6 @@ guild:
   prefix: b.
   lang: japanese
   maxtoken: 4095
+  viewfees: true
 user_blacklist:
 - "0000000000000000000"

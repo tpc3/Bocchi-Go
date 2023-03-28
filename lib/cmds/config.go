@@ -35,11 +35,14 @@ func ConfigUsage(session *discordgo.Session, orgMsg *discordgo.MessageCreate, gu
 		Name:  "maxtoken <int>",
 		Value: config.Lang[guild.Lang].Usage.Config.MaxToken,
 	})
+	msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{
+		Name:  "viewfees <bool>",
+		Value: config.Lang[guild.Lang].Usage.Config.ViewFees,
+	})
 	ReplyEmbed(session, orgMsg, msg)
 }
 
 func ConfigCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild config.Guild, message *string) {
-	maxtoken := strconv.Itoa(guild.MaxToken)
 	split := strings.SplitN(*message, " ", 2)
 	if *message == "" {
 		msg := embed.NewEmbed(session, orgMsg)
@@ -54,7 +57,11 @@ func ConfigCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guil
 		})
 		msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{
 			Name:  "maxtoken",
-			Value: maxtoken,
+			Value: strconv.Itoa(guild.MaxToken),
+		})
+		msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{
+			Name:  "viewfees",
+			Value: strconv.FormatBool(guild.ViewFees),
 		})
 		ReplyEmbed(session, orgMsg, msg)
 		return
@@ -81,7 +88,7 @@ func ConfigCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guil
 			return
 		}
 	case "maxtoken":
-		maxtoken = split[1]
+		maxtoken := split[1]
 		guild.MaxToken, _ = strconv.Atoi(maxtoken)
 		if guild.MaxToken < 1 || guild.MaxToken > 4095 {
 			ErrorReply(session, orgMsg, config.Lang[guild.Lang].Error.MustValue)
@@ -89,6 +96,14 @@ func ConfigCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guil
 		}
 		key = config.Lang[guild.Lang].Config.Item.Maxtoken
 		item = maxtoken
+	case "viewfees":
+		viewfees := split[1]
+		if viewfees != "true" && viewfees != "false" {
+			ErrorReply(session, orgMsg, config.Lang[guild.Lang].Error.MustBoolean)
+		}
+		guild.ViewFees, _ = strconv.ParseBool(viewfees)
+		key = config.Lang[guild.Lang].Config.Item.ViewFees
+		item = viewfees
 	default:
 		ConfigUsage(session, orgMsg, &guild, errors.New("item not found"))
 		return

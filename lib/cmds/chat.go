@@ -20,14 +20,10 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 		return
 	}
 	start := time.Now()
-	session.MessageReactionAdd(orgMsg.ChannelID, orgMsg.ID, "🤔")
-	typing := make(chan int)
 	go func() {
 		session.ChannelTyping(orgMsg.ChannelID)
-		typing <- 1
 	}()
 	response, coststr := chat.GptRequest(guild, &msg)
-	<-typing
 	if utf8.RuneCountInString(response) > 4096 {
 		ErrorReply(session, orgMsg, config.Lang[guild.Lang].Error.LongResponse)
 	}
@@ -42,9 +38,14 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 	embedMsg.Description = response
 	exectimetext := config.Lang[guild.Lang].Reply.ExecTime
 	second := config.Lang[guild.Lang].Reply.Second
-	embedMsg.Footer = &discordgo.MessageEmbedFooter{
-		Text: exectimetext + dulation + second + "\n" + config.Lang[guild.Lang].Reply.Cost + coststr,
+	if config.CurrentConfig.Guild.ViewFees {
+		embedMsg.Footer = &discordgo.MessageEmbedFooter{
+			Text: exectimetext + dulation + second + "\n" + config.Lang[guild.Lang].Reply.Cost + coststr,
+		}
+	} else {
+		embedMsg.Footer = &discordgo.MessageEmbedFooter{
+			Text: exectimetext + dulation + second,
+		}
 	}
-	session.MessageReactionRemove(orgMsg.ChannelID, orgMsg.ID, "🤔", session.State.User.ID)
 	GPTReplyEmbed(session, orgMsg, embedMsg)
 }

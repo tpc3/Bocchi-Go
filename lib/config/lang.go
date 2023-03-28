@@ -42,6 +42,7 @@ type itemstr struct {
 	Prefix   string
 	Lang     string
 	Maxtoken string
+	ViewFees string
 }
 
 type replystr struct {
@@ -66,6 +67,7 @@ type configusagestr struct {
 	Prefix   string
 	Lang     string
 	MaxToken string
+	ViewFees string
 }
 
 var (
@@ -81,9 +83,10 @@ func loadLang() {
 			Title: "使い方: ",
 			Config: configusagestr{
 				Desc:     "各種設定を行います。\n設定項目と内容は以下をご確認ください。",
-				Prefix:   "コマンドの接頭詞を指定します。\nデフォルトは`" + CurrentConfig.Guild.Prefix + "`です。",
-				Lang:     "言語を指定します。デフォルトは`" + CurrentConfig.Guild.Lang + "`です。",
-				MaxToken: "使用する最大トークン数を指定します。デフォルトは`" + strconv.Itoa(CurrentConfig.Guild.MaxToken) + "`です。",
+				Prefix:   "コマンドの接頭詞を指定します。\n現在の設定は`" + CurrentConfig.Guild.Prefix + "`です。",
+				Lang:     "言語を指定します。現在の設定は`" + CurrentConfig.Guild.Lang + "`です。",
+				MaxToken: "使用する最大トークン数を指定します。現在の設定は`" + strconv.Itoa(CurrentConfig.Guild.MaxToken) + "`です。",
+				ViewFees: "そのやり取りでいくらの料金が発生したかを表示するか指定します。現在の設定は`" + strconv.FormatBool(CurrentConfig.Guild.ViewFees) + "`です。",
 			},
 			Cmd: cmdusagestr{
 				ChatTitle: "`" + CurrentConfig.Guild.Prefix + "chat`",
@@ -103,6 +106,7 @@ func loadLang() {
 				Prefix:   "Prefixを\"",
 				Lang:     "botの使用言語を\"",
 				Maxtoken: "botが使用するトークンの最大値を\"",
+				ViewFees: "botが使用した料金の表示を\"",
 			},
 		},
 		Reply: replystr{
@@ -129,9 +133,9 @@ func loadLang() {
 			Title: "Usage: ",
 			Config: configusagestr{
 				Desc:     "Do configuration.\nItem list is below.",
-				Prefix:   "Specify command prefix.\nDefaults to `" + CurrentConfig.Guild.Prefix + "`",
-				Lang:     "Specify language.\nDefaults to `" + CurrentConfig.Guild.Lang + "`",
-				MaxToken: "Specify MaxTokens.\nDefaults to `" + strconv.Itoa(CurrentConfig.Guild.MaxToken) + "`",
+				Prefix:   "Specify command prefix.\nCurrent config is `" + CurrentConfig.Guild.Prefix + "`.",
+				Lang:     "Specify language.\nCurrent config is `" + CurrentConfig.Guild.Lang + "`.",
+				MaxToken: "Specify MaxTokens.\nCurrent config is `" + strconv.Itoa(CurrentConfig.Guild.MaxToken) + "`.",
 			},
 			Cmd: cmdusagestr{
 				ChatTitle: "`" + CurrentConfig.Guild.Prefix + "chat`",
@@ -151,6 +155,7 @@ func loadLang() {
 				Prefix:   "Prefix to \"",
 				Lang:     "Language used by bot for \"",
 				Maxtoken: "Max Tokens used by bot for \"",
+				ViewFees: "View Fees used by bot for \"",
 			},
 		},
 		Reply: replystr{

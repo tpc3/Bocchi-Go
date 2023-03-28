@@ -27,6 +27,7 @@ type Guild struct {
 	Prefix   string
 	Lang     string
 	MaxToken int
+	ViewFees bool
 }
 
 const configFile = "./config.yml"
@@ -82,10 +83,11 @@ func SaveGuild(guild *Guild) error {
 		return err
 	}
 
-	if guild.Prefix != CurrentConfig.Guild.Prefix || guild.Lang != CurrentConfig.Guild.Lang || guild.MaxToken != CurrentConfig.Guild.MaxToken {
+	if guild.Prefix != CurrentConfig.Guild.Prefix || guild.Lang != CurrentConfig.Guild.Lang || guild.MaxToken != CurrentConfig.Guild.MaxToken || guild.ViewFees != CurrentConfig.Guild.ViewFees {
 		CurrentConfig.Guild.Prefix = guild.Prefix
 		CurrentConfig.Guild.Lang = guild.Lang
 		CurrentConfig.Guild.MaxToken = guild.MaxToken
+		CurrentConfig.Guild.ViewFees = guild.ViewFees
 	}
 
 	newConfig := Config{

@@ -10,9 +10,9 @@ import (
 	"github.com/tpc3/Bocchi-Go/lib/embed"
 )
 
-func ReplyEmbed(session *discordgo.Session, orgMsg *discordgo.MessageCreate, embed *discordgo.MessageEmbed) {
+func ReplyEmbed(session *discordgo.Session, orgMsg *discordgo.MessageCreate, msgembed *discordgo.MessageEmbed) {
 	reply := discordgo.MessageSend{}
-	reply.Embed = embed
+	reply.Embed = msgembed
 	reply.Reference = orgMsg.Reference()
 	reply.AllowedMentions = &discordgo.MessageAllowedMentions{
 		RepliedUser: false,
@@ -23,10 +23,30 @@ func ReplyEmbed(session *discordgo.Session, orgMsg *discordgo.MessageCreate, emb
 	}
 }
 
-func GPTReplyEmbed(session *discordgo.Session, orgMsg *discordgo.MessageCreate, messageembed *discordgo.MessageEmbed) {
-	msgEmbed := messageembed
-	msgEmbed.Color = embed.ColorGPT
-	ReplyEmbed(session, orgMsg, msgEmbed)
+func GPTReplyEmbed(session *discordgo.Session, orgMsg *discordgo.MessageCreate, msgembed *discordgo.MessageEmbed) {
+	msgembed.Color = embed.ColorGPT
+	ReplyEmbed(session, orgMsg, msgembed)
+}
+
+func UsageReply(session *discordgo.Session, orgMsg *discordgo.MessageCreate, msgembed *discordgo.MessageEmbed) {
+	usage := embed.NewEmbed(session, orgMsg)
+	usage.Fields = append(usage.Fields, &discordgo.MessageEmbedField{
+		Name:  config.Lang[config.CurrentConfig.Guild.Lang].Usage.Cmd.ChatTitle,
+		Value: config.Lang[config.CurrentConfig.Guild.Lang].Usage.Cmd.ChatUsage,
+	})
+	usage.Fields = append(usage.Fields, &discordgo.MessageEmbedField{
+		Name:  config.Lang[config.CurrentConfig.Guild.Lang].Usage.Cmd.PingTitle,
+		Value: config.Lang[config.CurrentConfig.Guild.Lang].Usage.Cmd.PingUsage,
+	})
+	usage.Fields = append(usage.Fields, &discordgo.MessageEmbedField{
+		Name:  config.Lang[config.CurrentConfig.Guild.Lang].Usage.Cmd.HelpTitle,
+		Value: config.Lang[config.CurrentConfig.Guild.Lang].Usage.Cmd.HelpUsage,
+	})
+	usage.Fields = append(usage.Fields, &discordgo.MessageEmbedField{
+		Name:  config.Lang[config.CurrentConfig.Guild.Lang].Usage.Cmd.ConfTitle,
+		Value: config.Lang[config.CurrentConfig.Guild.Lang].Usage.Cmd.ConfUsage,
+	})
+	ReplyEmbed(session, orgMsg, usage)
 }
 
 func ErrorReply(session *discordgo.Session, orgMsg *discordgo.MessageCreate, description string) {

@@ -10,7 +10,6 @@ import (
 
 type Config struct {
 	Debug   bool
-	Help    string
 	Discord struct {
 		Token  string
 		Status string
@@ -35,7 +34,6 @@ const configFile = "./config.yml"
 var CurrentConfig Config
 
 func init() {
-	loadLang()
 	file, err := os.ReadFile(configFile)
 	if err != nil {
 		log.Fatal("Config load failed: ", err)
@@ -52,11 +50,13 @@ func init() {
 	if CurrentConfig.Discord.Token == "" {
 		log.Fatal("Token is empty")
 	}
+
+	loadLang()
+
 	err = VerifyGuild(&CurrentConfig.Guild)
 	if err != nil {
 		log.Fatal("Config verify failed: ", err)
 	}
-
 }
 
 func VerifyGuild(guild *Guild) error {
@@ -90,7 +90,6 @@ func SaveGuild(guild *Guild) error {
 
 	newConfig := Config{
 		Debug:         config.Debug,
-		Help:          config.Help,
 		Discord:       config.Discord,
 		Chat:          config.Chat,
 		Guild:         *guild,

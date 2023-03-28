@@ -6,7 +6,6 @@ import (
 
 type Strings struct {
 	Lang     string
-	Help     string
 	CurrConf string
 	Usage    usagestr
 	Config   configstr
@@ -30,6 +29,7 @@ type errorstr struct {
 type usagestr struct {
 	Title  string
 	Config configusagestr
+	Cmd    cmdusagestr
 }
 
 type configstr struct {
@@ -50,6 +50,17 @@ type replystr struct {
 	Cost     string
 }
 
+type cmdusagestr struct {
+	ChatTitle string
+	ChatUsage string
+	PingTitle string
+	PingUsage string
+	HelpTitle string
+	HelpUsage string
+	ConfTitle string
+	ConfUsage string
+}
+
 type configusagestr struct {
 	Desc     string
 	Prefix   string
@@ -65,7 +76,6 @@ func loadLang() {
 	Lang = map[string]Strings{}
 	Lang["japanese"] = Strings{
 		Lang:     "japanese",
-		Help:     "Botの使い方に関しては、下記Wikiをご参照ください。",
 		CurrConf: "現在の設定",
 		Usage: usagestr{
 			Title: "使い方: ",
@@ -74,6 +84,16 @@ func loadLang() {
 				Prefix:   "コマンドの接頭詞を指定します。\nデフォルトは`" + CurrentConfig.Guild.Prefix + "`です。",
 				Lang:     "言語を指定します。デフォルトは`" + CurrentConfig.Guild.Lang + "`です。",
 				MaxToken: "使用する最大トークン数を指定します。デフォルトは`" + strconv.Itoa(CurrentConfig.Guild.MaxToken) + "`です。",
+			},
+			Cmd: cmdusagestr{
+				ChatTitle: "`" + CurrentConfig.Guild.Prefix + "chat`",
+				ChatUsage: "`" + CurrentConfig.Guild.Prefix + "chat " + "<message>`\nChatGPTに文章を送信します。\n🤔をリアクションした場合は処理を通すのに成功していますので、処理が完了するまでお待ちください。\n処理が完了すると返信します。",
+				PingTitle: "`" + CurrentConfig.Guild.Prefix + "ping`",
+				PingUsage: "`" + CurrentConfig.Guild.Prefix + "ping`\nBotが起動状態か確認できます。\n返信とともに🏓をリアクションした場合、Botが利用できる状態です。",
+				HelpTitle: "`" + CurrentConfig.Guild.Prefix + "help`",
+				HelpUsage: "`" + CurrentConfig.Guild.Prefix + "help`\nBotの使い方を確認できます。\nこのメッセージを返信します。",
+				ConfTitle: "`" + CurrentConfig.Guild.Prefix + "config`",
+				ConfUsage: "`" + CurrentConfig.Guild.Prefix + "config <SetName> <SetValue>`\nBotの設定を確認できます。\n何も引数を設定しなかった場合、現在の設定を表示します。\n引数を設定すると、その設定を変更できます。",
 			},
 		},
 		Config: configstr{
@@ -104,7 +124,6 @@ func loadLang() {
 	}
 	Lang["english"] = Strings{
 		Lang:     "english",
-		Help:     "Usage is available on the Wiki.",
 		CurrConf: "Current config",
 		Usage: usagestr{
 			Title: "Usage: ",
@@ -113,6 +132,16 @@ func loadLang() {
 				Prefix:   "Specify command prefix.\nDefaults to `" + CurrentConfig.Guild.Prefix + "`",
 				Lang:     "Specify language.\nDefaults to `" + CurrentConfig.Guild.Lang + "`",
 				MaxToken: "Specify MaxTokens.\nDefaults to `" + strconv.Itoa(CurrentConfig.Guild.MaxToken) + "`",
+			},
+			Cmd: cmdusagestr{
+				ChatTitle: "`" + CurrentConfig.Guild.Prefix + "chat`",
+				ChatUsage: "`" + CurrentConfig.Guild.Prefix + "chat " + "<message>`\nSend a message to ChatGPT.\nIf Bot reacted 🤔, your message has been passing the process, so please wait for the process to complete.\nWhen the process is complete, Bot send reply to an embed.",
+				PingTitle: "`" + CurrentConfig.Guild.Prefix + "ping`",
+				PingUsage: "`" + CurrentConfig.Guild.Prefix + "ping`\nYou can check if the Bot is in startup status. \nIf Bot has reacted 🏓 and sent reply to an embed to your ping message, Bot is in startup status.",
+				HelpTitle: "`" + CurrentConfig.Guild.Prefix + "help`",
+				HelpUsage: "`" + CurrentConfig.Guild.Prefix + "help`\nYou can check how to use the Bot. \nSend reply to this message.",
+				ConfTitle: "`" + CurrentConfig.Guild.Prefix + "config`",
+				ConfUsage: "`" + CurrentConfig.Guild.Prefix + "config <SetName> <SetValue>`\nYou can check the configuration of Bot. \nIf you don't give any arguments, the current settings are displayed. \nIf you set any of the arguments, you can change its settings.",
 			},
 		},
 		Config: configstr{

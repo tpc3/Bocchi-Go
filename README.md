@@ -1,5 +1,5 @@
 # Bocchi-Go
-[![Docker Image CI](https://github.com/tpc3/Bocchi-Go/actions/workflows/docker-image.yml/badge.svg)](https://github.com/tpc3/Bocchi-Go/actions/workflows/docker-image.yml)
+[![Docker Image CI](https://github.com/tpc3/Bocchi-Go/actions/workflows/docker-image.yml/badge.svg)](https://github.com/tpc3/Bocchi-Go/actions/workflows/docker-image.yml)  
 Discord Bot for using OpenAIAPI on Discord, re-written in discordgo 
 
 ## Use

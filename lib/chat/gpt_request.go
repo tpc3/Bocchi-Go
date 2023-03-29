@@ -77,7 +77,7 @@ func getOpenAIResponse(guild *config.Guild, apikey *string, messages *[]Message)
 func calculationCost(tokens int, guild *config.Guild) string {
 	rate := getRate(guild)
 	cost := (float64(tokens) / 1000) * 0.002 * rate
-	return strconv.FormatFloat(cost, 'f', 10, 64)
+	return strconv.FormatFloat(cost, 'f', 2, 64)
 }
 
 func getRate(guild *config.Guild) float64 {

@@ -136,6 +136,7 @@ func loadLang() {
 				Prefix:   "Specify command prefix.\nCurrent config is `" + CurrentConfig.Guild.Prefix + "`.",
 				Lang:     "Specify language.\nCurrent config is `" + CurrentConfig.Guild.Lang + "`.",
 				MaxToken: "Specify MaxTokens.\nCurrent config is `" + strconv.Itoa(CurrentConfig.Guild.MaxToken) + "`.",
+				ViewFees: "Specify show fees.\nCurrent config is `" + strconv.FormatBool(CurrentConfig.Guild.ViewFees) + "`.",
 			},
 			Cmd: cmdusagestr{
 				ChatTitle: "`" + CurrentConfig.Guild.Prefix + "chat`",

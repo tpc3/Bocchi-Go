@@ -28,7 +28,7 @@ func GPTReplyEmbed(session *discordgo.Session, orgMsg *discordgo.MessageCreate, 
 	ReplyEmbed(session, orgMsg, msgembed)
 }
 
-func UsageReply(session *discordgo.Session, orgMsg *discordgo.MessageCreate, msgembed *discordgo.MessageEmbed) {
+func UsageReply(session *discordgo.Session, orgMsg *discordgo.MessageCreate) {
 	usage := embed.NewEmbed(session, orgMsg)
 	usage.Fields = append(usage.Fields, &discordgo.MessageEmbedField{
 		Name:  config.Lang[config.CurrentConfig.Guild.Lang].Usage.Cmd.ChatTitle,
@@ -76,9 +76,9 @@ func HandleCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guil
 	}
 	switch splitMsg[0] {
 	case Ping:
-		PingCmd(session, orgMsg, guild, &param)
+		PingCmd(session, orgMsg)
 	case Help:
-		HelpCmd(session, orgMsg, guild, &param)
+		HelpCmd(session, orgMsg)
 	case Config:
 		ConfigCmd(session, orgMsg, *guild, &param)
 	case Chat:

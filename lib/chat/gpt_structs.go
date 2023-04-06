@@ -29,3 +29,14 @@ type Usage struct {
 	CompletionTokens int `json:"completion_tokens"`
 	TotalTokens      int `json:"total_tokens"`
 }
+
+type ErrorResponse struct {
+	Error ErrorDetails `json:"error"`
+}
+
+type ErrorDetails struct {
+	Message string `json:"message"`
+	Type    string `json:"type"`
+	Param   string `json:"param"`
+	Code    string `json:"code"`
+}

@@ -56,6 +56,16 @@ func getOpenAIResponse(guild *config.Guild, apikey *string, messages *[]Message)
 		}
 	}(resp.Body)
 
+	if resp.StatusCode == 503 {
+		var errorResponse ErrorResponse
+		err = json.NewDecoder(resp.Body).Decode(&errorResponse)
+		if err != nil {
+			log.Fatal("Decoding error response failed: ", err)
+		}
+		log.Printf("Error: %s", errorResponse.Error.Message)
+		return "", ""
+	}
+
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		log.Fatal("Reading body error: ", err)
@@ -77,7 +87,19 @@ func getOpenAIResponse(guild *config.Guild, apikey *string, messages *[]Message)
 func calculationCost(tokens int, guild *config.Guild) string {
 	rate := getRate(guild)
 	cost := (float64(tokens) / 1000) * 0.002 * rate
-	return strconv.FormatFloat(cost, 'f', 2, 64)
+	recost := strconv.FormatFloat(cost, 'f', 2, 64)
+	if recost == "0.00" {
+		i := 1
+		text := "0.00"
+		for {
+			recost = strconv.FormatFloat(cost, 'f', 2+i, 64)
+			text = text + "0"
+			if recost != text {
+				break
+			}
+		}
+	}
+	return recost
 }
 
 func getRate(guild *config.Guild) float64 {

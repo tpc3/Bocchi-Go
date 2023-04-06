@@ -20,9 +20,7 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 		return
 	}
 	start := time.Now()
-	go func() {
-		session.ChannelTyping(orgMsg.ChannelID)
-	}()
+	session.MessageReactionAdd(orgMsg.ChannelID, orgMsg.ID, "🤔")
 	response, coststr := chat.GptRequest(guild, &msg)
 	if utf8.RuneCountInString(response) > 4096 {
 		ErrorReply(session, orgMsg, config.Lang[guild.Lang].Error.LongResponse)

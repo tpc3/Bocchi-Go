@@ -39,6 +39,10 @@ func ConfigUsage(session *discordgo.Session, orgMsg *discordgo.MessageCreate, gu
 		Name:  "viewfees <bool>",
 		Value: config.Lang[guild.Lang].Usage.Config.ViewFees,
 	})
+	msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{
+		Name:  "timeout <int>",
+		Value: config.Lang[guild.Lang].Usage.Config.TimeOut,
+	})
 	ReplyEmbed(session, orgMsg, msg)
 }
 
@@ -62,6 +66,10 @@ func ConfigCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guil
 		msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{
 			Name:  "viewfees",
 			Value: strconv.FormatBool(guild.ViewFees),
+		})
+		msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{
+			Name:  "timeout",
+			Value: strconv.Itoa(guild.Timeout),
 		})
 		ReplyEmbed(session, orgMsg, msg)
 		return
@@ -104,6 +112,14 @@ func ConfigCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guil
 		guild.ViewFees, _ = strconv.ParseBool(viewfees)
 		key = config.Lang[guild.Lang].Config.Item.ViewFees
 		item = viewfees
+	case "timeout":
+		timeout := split[1]
+		guild.Timeout, _ = strconv.Atoi(timeout)
+		if guild.Timeout < 1 {
+			ErrorReply(session, orgMsg, config.Lang[guild.Lang].Error.MustTimeout)
+		}
+		key = config.Lang[guild.Lang].Config.Item.Timeout
+		item = timeout
 	default:
 		ConfigUsage(session, orgMsg, &guild, errors.New("item not found"))
 		return

@@ -9,5 +9,6 @@ guild:
   lang: japanese
   maxtoken: 4095
   viewfees: true
+  timeout: 120
 user_blacklist:
 - "0000000000000000000"

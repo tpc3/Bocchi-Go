@@ -21,7 +21,7 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 	}
 	start := time.Now()
 	session.MessageReactionAdd(orgMsg.ChannelID, orgMsg.ID, "🤔")
-	timer := time.NewTimer(120 * time.Second)
+	timer := time.NewTimer(time.Duration(config.CurrentConfig.Guild.Timeout) * time.Second)
 	response, coststr := chat.GptRequest(guild, &msg)
 	select {
 	case <-timer.C:

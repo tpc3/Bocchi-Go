@@ -23,6 +23,7 @@ type errorstr struct {
 	SyntaxDesc   string
 	MustBoolean  string
 	MustValue    string
+	MustTimeout  string
 	LongResponse string
 	TimeOut      string
 }
@@ -44,6 +45,7 @@ type itemstr struct {
 	Lang     string
 	Maxtoken string
 	ViewFees string
+	Timeout  string
 }
 
 type replystr struct {
@@ -69,6 +71,7 @@ type configusagestr struct {
 	Lang     string
 	MaxToken string
 	ViewFees string
+	TimeOut  string
 }
 
 var (
@@ -108,6 +111,7 @@ func loadLang() {
 				Lang:     "botの使用言語を\"",
 				Maxtoken: "botが使用するトークンの最大値を\"",
 				ViewFees: "botが使用した料金の表示を\"",
+				Timeout:  "タイムアウトの時間を\"",
 			},
 		},
 		Reply: replystr{
@@ -124,6 +128,7 @@ func loadLang() {
 			SyntaxDesc:   "パラメータの解析に失敗しました。\nコマンドの構文が正しいかお確かめください。",
 			MustBoolean:  "その引数は`true`または`false`である必要があります。",
 			MustValue:    "その引数は`1`から`4095`の範囲の整数である必要があります。",
+			MustTimeout:  "その引数は1以上の自然数である必要があります。",
 			LongResponse: "AIの生成した文章が長すぎました。指示を変更してもう一度お試しください。",
 			TimeOut:      "要求がタイムアウトしました。もう一度お試しください。",
 		},
@@ -159,6 +164,7 @@ func loadLang() {
 				Lang:     "Language used by bot for \"",
 				Maxtoken: "Max Tokens used by bot for \"",
 				ViewFees: "View Fees used by bot for \"",
+				Timeout:  "The time until timeout for \"",
 			},
 		},
 		Reply: replystr{
@@ -175,6 +181,7 @@ func loadLang() {
 			SyntaxDesc:   "Failed to parse parameter.\nPlease check your command syntax.",
 			MustBoolean:  "That argument must be `true` or `false`.",
 			MustValue:    "That argument must be `1` to `4095` and integer value.",
+			MustTimeout:  "That argument must be a natural number greater than or equal to 1.",
 			LongResponse: "The AI-generated text is too long. Please modify your instructions and try again.",
 			TimeOut:      "The request has timed out. Please try again.",
 		},

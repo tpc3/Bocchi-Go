@@ -21,7 +21,15 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 	}
 	start := time.Now()
 	session.MessageReactionAdd(orgMsg.ChannelID, orgMsg.ID, "🤔")
+	timer := time.NewTimer(120 * time.Second)
 	response, coststr := chat.GptRequest(guild, &msg)
+	select {
+	case <-timer.C:
+		ErrorReply(session, orgMsg, config.Lang[guild.Lang].Error.TimeOut)
+		session.MessageReactionRemove(orgMsg.ChannelID, orgMsg.ID, "🤔", session.State.User.ID)
+		return
+	default:
+	}
 	if utf8.RuneCountInString(response) > 4096 {
 		ErrorReply(session, orgMsg, config.Lang[guild.Lang].Error.LongResponse)
 	}
@@ -45,5 +53,6 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 			Text: exectimetext + dulation + second,
 		}
 	}
+	session.MessageReactionRemove(orgMsg.ChannelID, orgMsg.ID, "🤔", session.State.User.ID)
 	GPTReplyEmbed(session, orgMsg, embedMsg)
 }

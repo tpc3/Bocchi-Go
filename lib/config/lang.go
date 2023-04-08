@@ -14,18 +14,18 @@ type Strings struct {
 }
 
 type errorstr struct {
-	Title        string
-	UnknownTitle string
-	UnknownDesc  string
-	NoCmd        string
-	SubCmd       string
-	Syntax       string
-	SyntaxDesc   string
-	MustBoolean  string
-	MustValue    string
-	MustTimeout  string
-	LongResponse string
-	TimeOut      string
+	Title               string
+	UnknownTitle        string
+	UnknownDesc         string
+	NoCmd               string
+	SubCmd              string
+	Syntax              string
+	SyntaxDesc          string
+	MustBoolean         string
+	MustValue           string
+	MustTimeoutDuration string
+	LongResponse        string
+	TimeOut             string
 }
 
 type usagestr struct {
@@ -94,7 +94,7 @@ func loadLang() {
 			},
 			Cmd: cmdusagestr{
 				ChatTitle: "`" + CurrentConfig.Guild.Prefix + "chat`",
-				ChatUsage: "`" + CurrentConfig.Guild.Prefix + "chat " + "<message>`\nChatGPTに文章を送信します。\n🤔をリアクションした場合は処理を通すのに成功していますので、処理が完了するまでお待ちください。\n処理が完了すると返信します。",
+				ChatUsage: "`" + CurrentConfig.Guild.Prefix + "chat " + "<message>`\nChatGPTに文章を送信します。\n🤔をリアクションした場合は処理を通すのに成功していますので、処理が完了するまでお待ちください。\n処理が完了すると返信します。\n`-l <int>`でログを読み込むことが出来ます。",
 				PingTitle: "`" + CurrentConfig.Guild.Prefix + "ping`",
 				PingUsage: "`" + CurrentConfig.Guild.Prefix + "ping`\nBotが起動状態か確認できます。\n返信とともに🏓をリアクションした場合、Botが利用できる状態です。",
 				HelpTitle: "`" + CurrentConfig.Guild.Prefix + "help`",
@@ -120,17 +120,17 @@ func loadLang() {
 			Cost:     "このチャットで使用された料金: ¥",
 		},
 		Error: errorstr{
-			UnknownTitle: "予期せぬエラーが発生しました。",
-			UnknownDesc:  "この問題は管理者に報告されます。",
-			NoCmd:        "そのようなコマンドはありません。",
-			SubCmd:       "引数が不正です。",
-			Syntax:       "構文エラー",
-			SyntaxDesc:   "パラメータの解析に失敗しました。\nコマンドの構文が正しいかお確かめください。",
-			MustBoolean:  "その引数は`true`または`false`である必要があります。",
-			MustValue:    "その引数は`1`から`4095`の範囲の整数である必要があります。",
-			MustTimeout:  "その引数は1以上の自然数である必要があります。",
-			LongResponse: "AIの生成した文章が長すぎました。指示を変更してもう一度お試しください。",
-			TimeOut:      "要求がタイムアウトしました。もう一度お試しください。",
+			UnknownTitle:        "予期せぬエラーが発生しました。",
+			UnknownDesc:         "この問題は管理者に報告されます。",
+			NoCmd:               "そのようなコマンドはありません。",
+			SubCmd:              "引数が不正です。",
+			Syntax:              "構文エラー",
+			SyntaxDesc:          "パラメータの解析に失敗しました。\nコマンドの構文が正しいかお確かめください。",
+			MustBoolean:         "その引数は`true`または`false`である必要があります。",
+			MustValue:           "その引数は`1`から`4095`の範囲の整数である必要があります。",
+			MustTimeoutDuration: "その引数は1以上の自然数である必要があります。",
+			LongResponse:        "AIの生成した文章が長すぎました。指示を変更してもう一度お試しください。",
+			TimeOut:             "要求がタイムアウトしました。もう一度お試しください。",
 		},
 	}
 	Lang["english"] = Strings{
@@ -147,7 +147,7 @@ func loadLang() {
 			},
 			Cmd: cmdusagestr{
 				ChatTitle: "`" + CurrentConfig.Guild.Prefix + "chat`",
-				ChatUsage: "`" + CurrentConfig.Guild.Prefix + "chat " + "<message>`\nSend a message to ChatGPT.\nIf Bot reacted 🤔, your message has been passing the process, so please wait for the process to complete.\nWhen the process is complete, Bot send reply to an embed.",
+				ChatUsage: "`" + CurrentConfig.Guild.Prefix + "chat " + "<message>`\nSend a message to ChatGPT.\nIf Bot reacted 🤔, your message has been passing the process, so please wait for the process to complete.\nWhen the process is complete, Bot send reply to an embed.\nAlso, you can load logs by `-r <int>`.",
 				PingTitle: "`" + CurrentConfig.Guild.Prefix + "ping`",
 				PingUsage: "`" + CurrentConfig.Guild.Prefix + "ping`\nYou can check if the Bot is in startup status. \nIf Bot has reacted 🏓 and sent reply to an embed to your ping message, Bot is in startup status.",
 				HelpTitle: "`" + CurrentConfig.Guild.Prefix + "help`",
@@ -173,17 +173,17 @@ func loadLang() {
 			Cost:     "Fees used in this chat: $",
 		},
 		Error: errorstr{
-			UnknownTitle: "Unexpected error is occurred.",
-			UnknownDesc:  "This issue will be reported",
-			NoCmd:        "No such command.",
-			SubCmd:       "Invalid argument.",
-			Syntax:       "Syntax error",
-			SyntaxDesc:   "Failed to parse parameter.\nPlease check your command syntax.",
-			MustBoolean:  "That argument must be `true` or `false`.",
-			MustValue:    "That argument must be `1` to `4095` and integer value.",
-			MustTimeout:  "That argument must be a natural number greater than or equal to 1.",
-			LongResponse: "The AI-generated text is too long. Please modify your instructions and try again.",
-			TimeOut:      "The request has timed out. Please try again.",
+			UnknownTitle:        "Unexpected error is occurred.",
+			UnknownDesc:         "This issue will be reported",
+			NoCmd:               "No such command.",
+			SubCmd:              "Invalid argument.",
+			Syntax:              "Syntax error",
+			SyntaxDesc:          "Failed to parse parameter.\nPlease check your command syntax.",
+			MustBoolean:         "That argument must be `true` or `false`.",
+			MustValue:           "That argument must be `1` to `4095` and integer value.",
+			MustTimeoutDuration: "That argument must be a natural number greater than or equal to 1.",
+			LongResponse:        "The AI-generated text is too long. Please modify your instructions and try again.",
+			TimeOut:             "The request has timed out. Please try again.",
 		},
 	}
 }

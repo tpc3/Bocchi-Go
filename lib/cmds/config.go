@@ -116,7 +116,7 @@ func ConfigCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guil
 		timeout := split[1]
 		guild.Timeout, _ = strconv.Atoi(timeout)
 		if guild.Timeout < 1 {
-			ErrorReply(session, orgMsg, config.Lang[guild.Lang].Error.MustTimeout)
+			ErrorReply(session, orgMsg, config.Lang[guild.Lang].Error.MustTimeoutDuration)
 		}
 		key = config.Lang[guild.Lang].Config.Item.Timeout
 		item = timeout

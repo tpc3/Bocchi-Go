@@ -3,12 +3,12 @@ package handler
 import (
 	"log"
 	"runtime/debug"
-	"strings"
 	"time"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/tpc3/Bocchi-Go/lib/cmds"
 	"github.com/tpc3/Bocchi-Go/lib/config"
+	"github.com/tpc3/Bocchi-Go/lib/utils"
 )
 
 func MessageCreate(session *discordgo.Session, orgMsg *discordgo.MessageCreate) {
@@ -47,21 +47,13 @@ func MessageCreate(session *discordgo.Session, orgMsg *discordgo.MessageCreate) 
 	prefix := config.CurrentConfig.Guild.Prefix
 	guild := config.CurrentConfig.Guild
 
-	isCmd := false
-	var trimedMsg string
-	if strings.HasPrefix(orgMsg.Content, prefix) {
-		isCmd = true
-		trimedMsg = strings.TrimPrefix(orgMsg.Content, prefix)
-	} else if strings.HasPrefix(orgMsg.Content, session.State.User.Mention()) {
-		isCmd = true
-		trimedMsg = strings.TrimPrefix(orgMsg.Content, session.State.User.Mention())
-		trimedMsg = strings.TrimPrefix(trimedMsg, " ")
-	}
+	isCmd, trimmedMsg := utils.TrimPrefix(orgMsg.Content, prefix, session.State.User.Mention())
+
 	if isCmd {
 		if config.CurrentConfig.Debug {
 			log.Print("Command processing")
 		}
-		cmds.HandleCmd(session, orgMsg, &guild, &trimedMsg)
+		cmds.HandleCmd(session, orgMsg, &guild, &trimmedMsg)
 		return
 	}
 }

@@ -17,37 +17,12 @@ import (
 
 const openai = "https://api.openai.com/v1/chat/completions"
 
-var (
-	chatlog []Message
-	timeout *url.Error
-)
+var timeout *url.Error
 
-func GptRequest(guild *config.Guild, msg *string, num *int) (response string, coststr string, err error) {
+func GptRequest(guild *config.Guild, msg *[]Message, num *int) (response string, coststr string, err error) {
 	apikey := config.CurrentConfig.Chat.ChatToken
-	chatlog = append(chatlog, Message{
-		Role:    "user",
-		Content: *msg,
-	})
-	var messages []Message
-	if *num != 0 {
-		if len(chatlog) <= *num {
-			log.Print("WARN: Too many logs requested, skipping read logs")
-		} else {
-			for ; *num > 1; *num-- {
-				messages = append(messages, Message{
-					Role:    chatlog[len(chatlog)-*num].Role,
-					Content: chatlog[len(chatlog)-*num].Content,
-				})
-			}
-		}
-	}
-	messages = append(messages, Message{
-		Role:    "user",
-		Content: *msg,
-	})
-	log.Print(messages)
-	response, coststr, err = getOpenAIResponse(guild, &apikey, &messages, num)
-	return response, coststr, err
+	response, coststr, err = getOpenAIResponse(guild, &apikey, msg, num)
+	return
 }
 
 func getOpenAIResponse(guild *config.Guild, apikey *string, messages *[]Message, num *int) (string, string, error) {
@@ -110,10 +85,6 @@ func getOpenAIResponse(guild *config.Guild, apikey *string, messages *[]Message,
 	if err != nil {
 		log.Fatal("Unmarshaling json error: ", err)
 	}
-	chatlog = append(chatlog, Message{
-		Role:    "assistant",
-		Content: response.Choices[0].Messages.Content,
-	})
 	result := response.Choices[0].Messages.Content
 	tokens := response.Usages.TotalTokens
 	cost := calculationCost(tokens, guild)

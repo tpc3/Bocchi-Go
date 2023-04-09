@@ -3,6 +3,7 @@ package cmds
 import (
 	"errors"
 	"net/url"
+	"reflect"
 	"strconv"
 	"strings"
 	"time"
@@ -12,6 +13,7 @@ import (
 	"github.com/tpc3/Bocchi-Go/lib/chat"
 	"github.com/tpc3/Bocchi-Go/lib/config"
 	"github.com/tpc3/Bocchi-Go/lib/embed"
+	"github.com/tpc3/Bocchi-Go/lib/utils"
 )
 
 const (
@@ -41,9 +43,56 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 	} else {
 		content = *msg
 	}
+
+	msgChain := []chat.Message{{Role: "user", Content: *msg}}
+
+	if orgMsg.ReferencedMessage != nil {
+		loopTargetMsg, err := session.ChannelMessage(orgMsg.ChannelID, orgMsg.ReferencedMessage.ID)
+		if err != nil {
+			UnknownError(session, orgMsg, &guild.Lang, err)
+			return
+		}
+		// Get reply msgs recursively
+		for i := 0; i < num; i++ {
+			if loopTargetMsg.Author.ID != session.State.User.ID {
+				break
+			} else if loopTargetMsg.Embeds[0].Color != embed.ColorGPT { //ToDo: Better handling
+				break
+			}
+			msgChain = append(msgChain, chat.Message{Role: "assistant", Content: loopTargetMsg.Embeds[0].Description})
+
+			if loopTargetMsg.ReferencedMessage == nil {
+				break
+			}
+			loopTargetMsg, err = session.ChannelMessage(orgMsg.ChannelID, loopTargetMsg.ReferencedMessage.ID)
+			if err != nil {
+				UnknownError(session, orgMsg, &guild.Lang, err)
+				return
+			}
+			if loopTargetMsg.Author.ID != orgMsg.Author.ID {
+				break
+			} else if loopTargetMsg.Content == "" {
+				break
+			}
+			_, trimmed := utils.TrimPrefix(loopTargetMsg.Content, config.CurrentConfig.Guild.Prefix, session.State.User.Mention())
+			msgChain = append(msgChain, chat.Message{Role: "user", Content: trimmed})
+
+			if loopTargetMsg.ReferencedMessage == nil {
+				break
+			}
+			loopTargetMsg, err = session.ChannelMessage(orgMsg.ChannelID, loopTargetMsg.ReferencedMessage.ID)
+			if err != nil {
+				UnknownError(session, orgMsg, &guild.Lang, err)
+				return
+			}
+		}
+
+		reverse(msgChain)
+	}
+
 	start := time.Now()
 	session.MessageReactionAdd(orgMsg.ChannelID, orgMsg.ID, "🤔")
-	response, coststr, err := chat.GptRequest(guild, &content, &num)
+	response, coststr, err := chat.GptRequest(guild, &msgChain, &num)
 	if errors.As(err, &timeout) && timeout.Timeout() {
 		ErrorReply(session, orgMsg, config.Lang[guild.Lang].Error.TimeOut)
 		return
@@ -74,4 +123,13 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 	}
 	session.MessageReactionRemove(orgMsg.ChannelID, orgMsg.ID, "🤔", session.State.User.ID)
 	GPTReplyEmbed(session, orgMsg, embedMsg)
+}
+
+// https://stackoverflow.com/questions/28058278/how-do-i-reverse-a-slice-in-go
+func reverse(s interface{}) {
+	n := reflect.ValueOf(s).Len()
+	swap := reflect.Swapper(s)
+	for i, j := 0, n-1; i < j; i, j = i+1, j-1 {
+		swap(i, j)
+	}
 }

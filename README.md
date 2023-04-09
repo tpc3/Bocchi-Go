@@ -21,12 +21,6 @@ https://discord.com/api/oauth2/authorize?client_id=XXXXXXXXXXXXXXXXXXX&permissio
 ### required
 - golang
 
-## Code Writer
-* [lb-migii](https://github.com/lb-migii)  
-Bocchi used discordpy was rewritten in discordgo
-* [Amaototi](https://github.com/Amaototi)  
-[Original Bocchi](https://github.com/tpc3/Bocchi) written in discordpy using ChatGPT-4
-
 ## Why Bocchi
 **𝑰 𝒅𝒐𝒏'𝒕 𝒌𝒏𝒐𝒘.**
 

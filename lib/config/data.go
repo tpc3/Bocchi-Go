@@ -48,10 +48,13 @@ func SaveData(data *Data, tokens int) error {
 	newData := Data{
 		Totaltokens: CurrentData.Totaltokens,
 	}
+
+	mutex.Lock()
 	writedata, err := yaml.Marshal(&newData)
 	if err != nil {
 		return nil
 	}
+	mutex.Unlock()
 
 	err = os.WriteFile(dataFile, writedata, 0666)
 	if err != nil {

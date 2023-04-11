@@ -23,7 +23,7 @@ const (
 
 var timeout *url.Error
 
-func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild *config.Guild, msg *string) {
+func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild *config.Guild, msg *string, data *config.Data) {
 	if *msg == "" {
 		ErrorReply(session, orgMsg, config.Lang[config.CurrentConfig.Guild.Lang].Error.SubCmd)
 		return
@@ -92,7 +92,7 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 
 	start := time.Now()
 	session.MessageReactionAdd(orgMsg.ChannelID, orgMsg.ID, "🤔")
-	response, coststr, err := chat.GptRequest(guild, &msgChain, &num)
+	response, err := chat.GptRequest(guild, &msgChain, &num, data)
 	if errors.As(err, &timeout) && timeout.Timeout() {
 		ErrorReply(session, orgMsg, config.Lang[guild.Lang].Error.TimeOut)
 		return
@@ -112,14 +112,8 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 	embedMsg.Description = response
 	exectimetext := config.Lang[guild.Lang].Reply.ExecTime
 	second := config.Lang[guild.Lang].Reply.Second
-	if config.CurrentConfig.Guild.ViewFees {
-		embedMsg.Footer = &discordgo.MessageEmbedFooter{
-			Text: exectimetext + dulation + second + "\n" + config.Lang[guild.Lang].Reply.Cost + coststr,
-		}
-	} else {
-		embedMsg.Footer = &discordgo.MessageEmbedFooter{
-			Text: exectimetext + dulation + second,
-		}
+	embedMsg.Footer = &discordgo.MessageEmbedFooter{
+		Text: exectimetext + dulation + second,
 	}
 	session.MessageReactionRemove(orgMsg.ChannelID, orgMsg.ID, "🤔", session.State.User.ID)
 	GPTReplyEmbed(session, orgMsg, embedMsg)

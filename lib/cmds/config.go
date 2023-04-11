@@ -36,10 +36,6 @@ func ConfigUsage(session *discordgo.Session, orgMsg *discordgo.MessageCreate, gu
 		Value: config.Lang[guild.Lang].Usage.Config.MaxToken,
 	})
 	msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{
-		Name:  "viewfees <bool>",
-		Value: config.Lang[guild.Lang].Usage.Config.ViewFees,
-	})
-	msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{
 		Name:  "timeout <int>",
 		Value: config.Lang[guild.Lang].Usage.Config.TimeOut,
 	})
@@ -62,10 +58,6 @@ func ConfigCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guil
 		msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{
 			Name:  "maxtoken",
 			Value: strconv.Itoa(guild.MaxToken),
-		})
-		msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{
-			Name:  "viewfees",
-			Value: strconv.FormatBool(guild.ViewFees),
 		})
 		msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{
 			Name:  "timeout",
@@ -104,14 +96,6 @@ func ConfigCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guil
 		}
 		key = config.Lang[guild.Lang].Config.Item.Maxtoken
 		item = maxtoken
-	case "viewfees":
-		viewfees := split[1]
-		if viewfees != "true" && viewfees != "false" {
-			ErrorReply(session, orgMsg, config.Lang[guild.Lang].Error.MustBoolean)
-		}
-		guild.ViewFees, _ = strconv.ParseBool(viewfees)
-		key = config.Lang[guild.Lang].Config.Item.ViewFees
-		item = viewfees
 	case "timeout":
 		timeout := split[1]
 		guild.Timeout, _ = strconv.Atoi(timeout)

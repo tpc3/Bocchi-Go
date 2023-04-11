@@ -25,6 +25,7 @@ func main() {
 	discord.UpdateGameStatus(0, config.CurrentConfig.Discord.Status)
 	log.Print("Bocchi-Go is now running!")
 	defer discord.Close()
+	config.RunCron()
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt)
 	<-stop

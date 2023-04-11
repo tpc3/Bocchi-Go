@@ -27,7 +27,6 @@ type Guild struct {
 	Prefix   string
 	Lang     string
 	MaxToken int
-	ViewFees bool
 	Timeout  int
 }
 
@@ -84,11 +83,10 @@ func SaveGuild(guild *Guild) error {
 		return err
 	}
 
-	if guild.Prefix != CurrentConfig.Guild.Prefix || guild.Lang != CurrentConfig.Guild.Lang || guild.MaxToken != CurrentConfig.Guild.MaxToken || guild.ViewFees != CurrentConfig.Guild.ViewFees || guild.Timeout != CurrentConfig.Guild.Timeout {
+	if guild.Prefix != CurrentConfig.Guild.Prefix || guild.Lang != CurrentConfig.Guild.Lang || guild.MaxToken != CurrentConfig.Guild.MaxToken || guild.Timeout != CurrentConfig.Guild.Timeout {
 		CurrentConfig.Guild.Prefix = guild.Prefix
 		CurrentConfig.Guild.Lang = guild.Lang
 		CurrentConfig.Guild.MaxToken = guild.MaxToken
-		CurrentConfig.Guild.ViewFees = guild.ViewFees
 		CurrentConfig.Guild.Timeout = guild.Timeout
 	}
 

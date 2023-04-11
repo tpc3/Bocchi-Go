@@ -9,7 +9,6 @@ import (
 	"net"
 	"net/http"
 	"net/url"
-	"strconv"
 	"time"
 
 	"github.com/tpc3/Bocchi-Go/lib/config"
@@ -19,13 +18,13 @@ const openai = "https://api.openai.com/v1/chat/completions"
 
 var timeout *url.Error
 
-func GptRequest(guild *config.Guild, msg *[]Message, num *int) (response string, coststr string, err error) {
+func GptRequest(guild *config.Guild, msg *[]Message, num *int, data *config.Data) (string, error) {
 	apikey := config.CurrentConfig.Chat.ChatToken
-	response, coststr, err = getOpenAIResponse(guild, &apikey, msg, num)
-	return
+	response, err := getOpenAIResponse(guild, &apikey, msg, num, data)
+	return response, err
 }
 
-func getOpenAIResponse(guild *config.Guild, apikey *string, messages *[]Message, num *int) (string, string, error) {
+func getOpenAIResponse(guild *config.Guild, apikey *string, messages *[]Message, num *int, data *config.Data) (string, error) {
 	requestBody := OpenaiRequest{
 		Model:    "gpt-3.5-turbo",
 		Messages: *messages,
@@ -59,7 +58,7 @@ func getOpenAIResponse(guild *config.Guild, apikey *string, messages *[]Message,
 	resp, err := client.Do(req)
 	if err != nil {
 		if errors.As(err, &timeout) && timeout.Timeout() {
-			return "", "", err
+			return "", err
 		} else {
 			log.Fatal("Sending http request error: ", err)
 		}
@@ -72,7 +71,7 @@ func getOpenAIResponse(guild *config.Guild, apikey *string, messages *[]Message,
 			log.Panic("Decoding error response failed: ", err)
 		}
 		log.Print("Service is unavailable: ", errorResponse.Error.Message)
-		return "", "", err
+		return "", err
 	}
 
 	body, err := io.ReadAll(resp.Body)
@@ -87,47 +86,8 @@ func getOpenAIResponse(guild *config.Guild, apikey *string, messages *[]Message,
 	}
 	result := response.Choices[0].Messages.Content
 	tokens := response.Usages.TotalTokens
-	cost := calculationCost(tokens, guild)
 
-	return result, cost, nil
-}
+	config.SaveData(data, tokens)
 
-func calculationCost(tokens int, guild *config.Guild) string {
-	rate := getRate(guild)
-	cost := (float64(tokens) / 1000) * 0.002 * rate
-	recost := strconv.FormatFloat(cost, 'f', 2, 64)
-	if recost == "0.00" {
-		i := 1
-		text := "0.00"
-		for {
-			recost = strconv.FormatFloat(cost, 'f', 2+i, 64)
-			text = text + "0"
-			if recost != text {
-				break
-			}
-		}
-	}
-	return recost
-}
-
-func getRate(guild *config.Guild) float64 {
-	if config.Lang[guild.Lang].Lang == "japanese" {
-		url := "https://api.excelapi.org/currency/rate?pair=usd-jpy"
-		resp, err := http.Get(url)
-		if err != nil {
-			log.Fatal("Sending http request error: ", err)
-		}
-		defer resp.Body.Close()
-		byteArray, err := io.ReadAll(resp.Body)
-		if err != nil {
-			log.Fatal("Reading body error: ", err)
-		}
-		rate, err := strconv.ParseFloat(string(byteArray), 64)
-		if err != nil {
-			log.Fatal("Parsing rate error: ", err)
-		}
-		return rate
-	} else {
-		return 1
-	}
+	return result, nil
 }

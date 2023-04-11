@@ -46,6 +46,7 @@ func MessageCreate(session *discordgo.Session, orgMsg *discordgo.MessageCreate) 
 	}
 	prefix := config.CurrentConfig.Guild.Prefix
 	guild := config.CurrentConfig.Guild
+	date := config.CurrentData
 
 	isCmd, trimmedMsg := utils.TrimPrefix(orgMsg.Content, prefix, session.State.User.Mention())
 
@@ -53,7 +54,7 @@ func MessageCreate(session *discordgo.Session, orgMsg *discordgo.MessageCreate) 
 		if config.CurrentConfig.Debug {
 			log.Print("Command processing")
 		}
-		cmds.HandleCmd(session, orgMsg, &guild, &trimmedMsg)
+		cmds.HandleCmd(session, orgMsg, &guild, &date, &trimmedMsg)
 		return
 	}
 }

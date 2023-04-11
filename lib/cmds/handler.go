@@ -66,7 +66,7 @@ func UnknownError(session *discordgo.Session, orgMsg *discordgo.MessageCreate, l
 	ReplyEmbed(session, orgMsg, msgEmbed)
 }
 
-func HandleCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild *config.Guild, message *string) {
+func HandleCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild *config.Guild, data *config.Data, message *string) {
 	splitMsg := strings.SplitN(*message, " ", 2)
 	var param string
 	if len(splitMsg) == 2 {
@@ -81,8 +81,10 @@ func HandleCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guil
 		HelpCmd(session, orgMsg)
 	case Config:
 		ConfigCmd(session, orgMsg, *guild, &param)
+	case Cost:
+		CostCmd(session, orgMsg, guild)
 	case Chat:
-		go ChatCmd(session, orgMsg, guild, &param)
+		go ChatCmd(session, orgMsg, guild, &param, data)
 	default:
 		ErrorReply(session, orgMsg, config.Lang[guild.Lang].Error.NoCmd)
 	}

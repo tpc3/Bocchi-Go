@@ -44,7 +44,6 @@ type itemstr struct {
 	Prefix   string
 	Lang     string
 	Maxtoken string
-	ViewFees string
 	Timeout  string
 }
 
@@ -70,7 +69,6 @@ type configusagestr struct {
 	Prefix   string
 	Lang     string
 	MaxToken string
-	ViewFees string
 	TimeOut  string
 }
 
@@ -90,7 +88,6 @@ func loadLang() {
 				Prefix:   "コマンドの接頭詞を指定します。\n現在の設定は`" + CurrentConfig.Guild.Prefix + "`です。",
 				Lang:     "言語を指定します。現在の設定は`" + CurrentConfig.Guild.Lang + "`です。",
 				MaxToken: "使用する最大トークン数を指定します。現在の設定は`" + strconv.Itoa(CurrentConfig.Guild.MaxToken) + "`です。",
-				ViewFees: "そのやり取りでいくらの料金が発生したかを表示するか指定します。現在の設定は`" + strconv.FormatBool(CurrentConfig.Guild.ViewFees) + "`です。",
 			},
 			Cmd: cmdusagestr{
 				ChatTitle: "`" + CurrentConfig.Guild.Prefix + "chat`",
@@ -110,14 +107,13 @@ func loadLang() {
 				Prefix:   "Prefixを\"",
 				Lang:     "botの使用言語を\"",
 				Maxtoken: "botが使用するトークンの最大値を\"",
-				ViewFees: "botが使用した料金の表示を\"",
 				Timeout:  "タイムアウトの時間を\"",
 			},
 		},
 		Reply: replystr{
 			ExecTime: "実行時間: ",
 			Second:   "秒",
-			Cost:     "このチャットで使用された料金: ¥",
+			Cost:     "この月に使用された料金: ¥ ",
 		},
 		Error: errorstr{
 			UnknownTitle:        "予期せぬエラーが発生しました。",
@@ -143,7 +139,6 @@ func loadLang() {
 				Prefix:   "Specify command prefix.\nCurrent config is `" + CurrentConfig.Guild.Prefix + "`.",
 				Lang:     "Specify language.\nCurrent config is `" + CurrentConfig.Guild.Lang + "`.",
 				MaxToken: "Specify MaxTokens.\nCurrent config is `" + strconv.Itoa(CurrentConfig.Guild.MaxToken) + "`.",
-				ViewFees: "Specify show fees.\nCurrent config is `" + strconv.FormatBool(CurrentConfig.Guild.ViewFees) + "`.",
 			},
 			Cmd: cmdusagestr{
 				ChatTitle: "`" + CurrentConfig.Guild.Prefix + "chat`",
@@ -163,14 +158,13 @@ func loadLang() {
 				Prefix:   "Prefix for \"",
 				Lang:     "Language used by bot for \"",
 				Maxtoken: "Max Tokens used by bot for \"",
-				ViewFees: "View Fees used by bot for \"",
 				Timeout:  "The time until timeout for \"",
 			},
 		},
 		Reply: replystr{
 			ExecTime: "Execution time: ",
 			Second:   "s",
-			Cost:     "Fees used in this chat: $",
+			Cost:     "Fees used in this month: $ ",
 		},
 		Error: errorstr{
 			UnknownTitle:        "Unexpected error is occurred.",

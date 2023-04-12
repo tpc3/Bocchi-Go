@@ -49,9 +49,9 @@ func getOpenAIResponse(apikey *string, messages *[]Message, data *config.Data) (
 				Timeout:   time.Duration(time.Duration(config.CurrentConfig.Guild.Timeout).Seconds()),
 				KeepAlive: time.Duration(time.Duration(config.CurrentConfig.Guild.Timeout).Seconds()),
 			}).DialContext,
-			TLSHandshakeTimeout:   10 * time.Second,
-			ResponseHeaderTimeout: 10 * time.Second,
-			ExpectContinueTimeout: 1 * time.Second,
+			TLSHandshakeTimeout:   time.Duration(time.Duration(config.CurrentConfig.Guild.Timeout).Seconds()),
+			ResponseHeaderTimeout: time.Duration(time.Duration(config.CurrentConfig.Guild.Timeout).Seconds()),
+			ExpectContinueTimeout: time.Duration(time.Duration(config.CurrentConfig.Guild.Timeout).Seconds()),
 		},
 		Timeout: time.Duration(time.Duration(config.CurrentConfig.Guild.Timeout).Seconds()),
 	}

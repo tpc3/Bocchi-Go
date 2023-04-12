@@ -30,7 +30,7 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 		return
 	}
 	var content, param string
-	var num int = 0
+	var num int
 	if strings.Contains(*msg, Continue) {
 		if strings.HasPrefix(*msg, "-l ") {
 			content = strings.SplitN(*msg, " ", 3)[2]
@@ -43,9 +43,15 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 		}
 	} else {
 		content = *msg
+		if strings.HasPrefix(content, "-l ") {
+			content = strings.TrimPrefix(content, "-l ")
+		} else {
+			content = strings.TrimSuffix(content, " -l")
+		}
+		num = 2
 	}
 
-	msgChain := []chat.Message{{Role: "user", Content: *msg}}
+	msgChain := []chat.Message{{Role: "user", Content: content}}
 
 	if orgMsg.ReferencedMessage != nil {
 		loopTargetMsg, err := session.State.Message(orgMsg.ChannelID, orgMsg.ReferencedMessage.ID)
@@ -71,9 +77,11 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 			if loopTargetMsg.ReferencedMessage == nil {
 				break
 			}
-			loopTargetMsg, err = session.State.Message(orgMsg.ChannelID, orgMsg.ReferencedMessage.ID)
+
+			PrevState := loopTargetMsg
+			loopTargetMsg, err = session.State.Message(orgMsg.ChannelID, loopTargetMsg.ReferencedMessage.ID)
 			if err != nil {
-				loopTargetMsg, err = session.ChannelMessage(orgMsg.ChannelID, orgMsg.ReferencedMessage.ID)
+				loopTargetMsg, err = session.ChannelMessage(orgMsg.ChannelID, PrevState.ReferencedMessage.ID)
 				if err != nil {
 					log.Panic("Failed to get channel message: ", err)
 				}
@@ -82,21 +90,23 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 					log.Panic("Failed to add message into state: ", err)
 				}
 			}
+
 			if loopTargetMsg.Author.ID != orgMsg.Author.ID {
 				break
 			} else if loopTargetMsg.Content == "" {
 				break
 			}
-			_, trimmed := utils.TrimPrefix(loopTargetMsg.Content, config.CurrentConfig.Guild.Prefix, session.State.User.Mention())
+			_, trimmed := utils.TrimPrefix(loopTargetMsg.Content, config.CurrentConfig.Guild.Prefix+Chat+" ", session.State.User.Mention())
 			msgChain = append(msgChain, chat.Message{Role: "user", Content: trimmed})
 
 			if loopTargetMsg.ReferencedMessage == nil {
 				break
 			}
 
-			loopTargetMsg, err = session.State.Message(orgMsg.ChannelID, orgMsg.ReferencedMessage.ID)
+			PrevState = loopTargetMsg
+			loopTargetMsg, err = session.State.Message(orgMsg.ChannelID, loopTargetMsg.ReferencedMessage.ID)
 			if err != nil {
-				loopTargetMsg, err = session.ChannelMessage(orgMsg.ChannelID, orgMsg.ReferencedMessage.ID)
+				loopTargetMsg, err = session.ChannelMessage(orgMsg.ChannelID, PrevState.ReferencedMessage.ID)
 				if err != nil {
 					log.Panic("Failed to get channel message: ", err)
 				}

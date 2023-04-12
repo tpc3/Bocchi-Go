@@ -2,6 +2,7 @@ package cmds
 
 import (
 	"errors"
+	"log"
 	"net/url"
 	"reflect"
 	"strconv"
@@ -47,10 +48,16 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 	msgChain := []chat.Message{{Role: "user", Content: *msg}}
 
 	if orgMsg.ReferencedMessage != nil {
-		loopTargetMsg, err := session.ChannelMessage(orgMsg.ChannelID, orgMsg.ReferencedMessage.ID)
+		loopTargetMsg, err := session.State.Message(orgMsg.ChannelID, orgMsg.ReferencedMessage.ID)
 		if err != nil {
-			UnknownError(session, orgMsg, &guild.Lang, err)
-			return
+			loopTargetMsg, err = session.ChannelMessage(orgMsg.ChannelID, orgMsg.ReferencedMessage.ID)
+			if err != nil {
+				log.Panic("Failed to get channel message: ", err)
+			}
+			err = session.State.MessageAdd(loopTargetMsg)
+			if err != nil {
+				log.Panic("Failed to add message into state: ", err)
+			}
 		}
 		// Get reply msgs recursively
 		for i := 0; i < num; i++ {
@@ -64,10 +71,16 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 			if loopTargetMsg.ReferencedMessage == nil {
 				break
 			}
-			loopTargetMsg, err = session.ChannelMessage(orgMsg.ChannelID, loopTargetMsg.ReferencedMessage.ID)
+			loopTargetMsg, err = session.State.Message(orgMsg.ChannelID, orgMsg.ReferencedMessage.ID)
 			if err != nil {
-				UnknownError(session, orgMsg, &guild.Lang, err)
-				return
+				loopTargetMsg, err = session.ChannelMessage(orgMsg.ChannelID, orgMsg.ReferencedMessage.ID)
+				if err != nil {
+					log.Panic("Failed to get channel message: ", err)
+				}
+				err = session.State.MessageAdd(loopTargetMsg)
+				if err != nil {
+					log.Panic("Failed to add message into state: ", err)
+				}
 			}
 			if loopTargetMsg.Author.ID != orgMsg.Author.ID {
 				break
@@ -80,10 +93,17 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 			if loopTargetMsg.ReferencedMessage == nil {
 				break
 			}
-			loopTargetMsg, err = session.ChannelMessage(orgMsg.ChannelID, loopTargetMsg.ReferencedMessage.ID)
+
+			loopTargetMsg, err = session.State.Message(orgMsg.ChannelID, orgMsg.ReferencedMessage.ID)
 			if err != nil {
-				UnknownError(session, orgMsg, &guild.Lang, err)
-				return
+				loopTargetMsg, err = session.ChannelMessage(orgMsg.ChannelID, orgMsg.ReferencedMessage.ID)
+				if err != nil {
+					log.Panic("Failed to get channel message: ", err)
+				}
+				err = session.State.MessageAdd(loopTargetMsg)
+				if err != nil {
+					log.Panic("Failed to add message into state: ", err)
+				}
 			}
 		}
 

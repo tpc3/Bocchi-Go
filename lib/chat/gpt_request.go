@@ -46,14 +46,14 @@ func getOpenAIResponse(apikey *string, messages *[]Message, data *config.Data) (
 	client := &http.Client{
 		Transport: &http.Transport{
 			DialContext: (&net.Dialer{
-				Timeout:   time.Duration(time.Duration(config.CurrentConfig.Guild.Timeout).Seconds()),
-				KeepAlive: time.Duration(time.Duration(config.CurrentConfig.Guild.Timeout).Seconds()),
+				Timeout:   time.Duration(config.CurrentConfig.Guild.Timeout) * time.Second,
+				KeepAlive: time.Duration(config.CurrentConfig.Guild.Timeout) * time.Second,
 			}).DialContext,
-			TLSHandshakeTimeout:   time.Duration(time.Duration(config.CurrentConfig.Guild.Timeout).Seconds()),
-			ResponseHeaderTimeout: time.Duration(time.Duration(config.CurrentConfig.Guild.Timeout).Seconds()),
-			ExpectContinueTimeout: time.Duration(time.Duration(config.CurrentConfig.Guild.Timeout).Seconds()),
+			TLSHandshakeTimeout:   time.Duration(config.CurrentConfig.Guild.Timeout) * time.Second,
+			ResponseHeaderTimeout: time.Duration(config.CurrentConfig.Guild.Timeout) * time.Second,
+			ExpectContinueTimeout: time.Duration(config.CurrentConfig.Guild.Timeout) * time.Second,
 		},
-		Timeout: time.Duration(time.Duration(config.CurrentConfig.Guild.Timeout).Seconds()),
+		Timeout: time.Duration(config.CurrentConfig.Guild.Timeout) * time.Second,
 	}
 	resp, err := client.Do(req)
 	if err != nil {

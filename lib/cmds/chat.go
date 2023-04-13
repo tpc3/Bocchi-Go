@@ -122,10 +122,15 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 
 	start := time.Now()
 	session.MessageReactionAdd(orgMsg.ChannelID, orgMsg.ID, "🤔")
-	response, err := chat.GptRequest(&msgChain, data)
-	if errors.As(err, &timeout) && timeout.Timeout() {
-		ErrorReply(session, orgMsg, config.Lang[guild.Lang].Error.TimeOut)
-		return
+	response, err := chat.GptRequest(&msgChain, data, guild)
+	if err != nil {
+		if errors.As(err, &timeout) && timeout.Timeout() {
+			ErrorReply(session, orgMsg, config.Lang[guild.Lang].Error.TimeOut)
+			return
+		} else {
+			ErrorReply(session, orgMsg, err.Error())
+			return
+		}
 	}
 	if utf8.RuneCountInString(response) > 4096 {
 		ErrorReply(session, orgMsg, config.Lang[guild.Lang].Error.LongResponse)

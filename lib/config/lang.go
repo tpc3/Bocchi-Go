@@ -43,6 +43,7 @@ type configstr struct {
 type itemstr struct {
 	Prefix   string
 	Lang     string
+	Model    string
 	Maxtoken string
 	Timeout  string
 }
@@ -106,6 +107,7 @@ func loadLang() {
 			Item: itemstr{
 				Prefix:   "Prefixを\"",
 				Lang:     "botの使用言語を\"",
+				Model:    "APIで使用するモデルを\"",
 				Maxtoken: "botが使用するトークンの最大値を\"",
 				Timeout:  "タイムアウトの時間を\"",
 			},
@@ -158,6 +160,7 @@ func loadLang() {
 				Prefix:   "Prefix for \"",
 				Lang:     "Language used by bot for \"",
 				Maxtoken: "Max Tokens used by bot for \"",
+				Model:    "Model used by API for\"",
 				Timeout:  "The time until timeout for \"",
 			},
 		},

@@ -32,6 +32,10 @@ func ConfigUsage(session *discordgo.Session, orgMsg *discordgo.MessageCreate, gu
 		Value: config.Lang[guild.Lang].Usage.Config.Lang,
 	})
 	msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{
+		Name:  "model <model name>",
+		Value: config.Lang[guild.Lang].Usage.Config.Lang,
+	})
+	msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{
 		Name:  "maxtoken <int>",
 		Value: config.Lang[guild.Lang].Usage.Config.MaxToken,
 	})
@@ -54,6 +58,10 @@ func ConfigCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guil
 		msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{
 			Name:  "lang",
 			Value: guild.Lang,
+		})
+		msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{
+			Name:  "model",
+			Value: guild.Model,
 		})
 		msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{
 			Name:  "maxtoken",
@@ -87,6 +95,15 @@ func ConfigCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guil
 			ErrorReply(session, orgMsg, "unsupported language")
 			return
 		}
+	case "model":
+		if split[1] != "gpt-4" && split[1] != "gpt-4-32k" && split[1] != "gpt-3.5-turbo" {
+			ErrorReply(session, orgMsg, "unsupported models")
+			return
+		} else {
+			guild.Model = split[1]
+			key = config.Lang[guild.Lang].Config.Item.Model
+			item = guild.Model
+		}
 	case "maxtoken":
 		maxtoken := split[1]
 		guild.MaxToken, _ = strconv.Atoi(maxtoken)
@@ -101,6 +118,7 @@ func ConfigCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guil
 		guild.Timeout, _ = strconv.Atoi(timeout)
 		if guild.Timeout < 1 {
 			ErrorReply(session, orgMsg, config.Lang[guild.Lang].Error.MustTimeoutDuration)
+			return
 		}
 		key = config.Lang[guild.Lang].Config.Item.Timeout
 		item = timeout

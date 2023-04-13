@@ -7,6 +7,7 @@ chat:
 guild:
   prefix: b.
   lang: japanese
+  model: gpt-4
   maxtoken: 4095
   timeout: 120
 user_blacklist:

@@ -1,6 +1,7 @@
 package config
 
 import (
+	"errors"
 	"log"
 	"os"
 	"sync"
@@ -22,7 +23,10 @@ var mutex sync.Mutex
 func init() {
 	file, err := os.ReadFile(dataFile)
 	if err != nil {
-		log.Fatal("Data load failed: ", err)
+		if !errors.Is(err, os.ErrNotExist) {
+			log.Fatal("Data load failed: ", err)
+		}
+		return
 	}
 	err = yaml.Unmarshal(file, &CurrentData)
 	if err != nil {

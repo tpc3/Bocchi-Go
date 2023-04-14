@@ -19,11 +19,11 @@ const (
 func CostCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild *config.Guild) {
 	embedMsg := embed.NewEmbed(session, orgMsg)
 	embedMsg.Title = "Cost"
-	embedMsg.Description = config.Lang[guild.Lang].Reply.Cost + calculationTokens(guild)
+	embedMsg.Description = config.Lang[guild.Lang].Reply.Cost + calculationTokens(session, orgMsg, guild)
 	ReplyEmbed(session, orgMsg, embedMsg)
 }
 
-func calculationTokens(guild *config.Guild) string {
+func calculationTokens(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild *config.Guild) string {
 
 	var rate float64
 	Tokens := float64(config.CurrentData.Totaltokens)
@@ -33,7 +33,7 @@ func calculationTokens(guild *config.Guild) string {
 		resp, err := http.Get(url)
 
 		if err != nil {
-			log.Fatal("Sending http request error: ", err)
+			UnknownError(session, orgMsg, &guild.Lang, err)
 		}
 
 		defer resp.Body.Close()

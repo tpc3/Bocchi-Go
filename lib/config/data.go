@@ -53,12 +53,12 @@ func SaveData(data *Data, tokens int) error {
 		Totaltokens: CurrentData.Totaltokens,
 	}
 
+	mutex.Lock()
 	writedata, err := yaml.Marshal(&newData)
 	if err != nil {
 		return nil
 	}
 
-	mutex.Lock()
 	err = os.WriteFile(dataFile, writedata, 0666)
 	if err != nil {
 		return nil
@@ -80,12 +80,12 @@ func ResetTokens() error {
 		Totaltokens: CurrentData.Totaltokens,
 	}
 
+	mutex.Lock()
 	data, err := yaml.Marshal(&newData)
 	if err != nil {
 		return nil
 	}
 
-	mutex.Lock()
 	err = os.WriteFile(dataFile, data, 0666)
 	if err != nil {
 		return nil

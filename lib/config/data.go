@@ -26,8 +26,23 @@ func init() {
 		if !errors.Is(err, os.ErrNotExist) {
 			log.Fatal("Data load failed: ", err)
 		}
+
+		CurrentData = Data{
+			Totaltokens: 0,
+		}
+
+		initdata, err := yaml.Marshal(CurrentData)
+		if err != nil {
+			return
+		}
+
+		err = os.WriteFile(dataFile, initdata, 0666)
+		if err != nil {
+			return
+		}
 		return
 	}
+
 	err = yaml.Unmarshal(file, &CurrentData)
 	if err != nil {
 		log.Fatal("Data parse failed: ", err)

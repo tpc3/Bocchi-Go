@@ -88,7 +88,10 @@ func getOpenAIResponse(apikey *string, messages *[]Message, data *config.Data, g
 	result := response.Choices[0].Messages.Content
 	tokens := response.Usages.TotalTokens
 
-	config.SaveData(data, tokens)
+	err = config.SaveData(data, tokens)
+	if err != nil {
+		log.Fatal("Data save failed: ", err)
+	}
 
 	return result, nil
 }

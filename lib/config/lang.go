@@ -63,6 +63,8 @@ type cmdusagestr struct {
 	HelpUsage string
 	ConfTitle string
 	ConfUsage string
+	CostTitle string
+	CostUsage string
 }
 
 type configusagestr struct {
@@ -99,6 +101,8 @@ func loadLang() {
 				HelpUsage: "`" + CurrentConfig.Guild.Prefix + "help`\nBotの使い方を確認できます。\nこのメッセージを返信します。",
 				ConfTitle: "`" + CurrentConfig.Guild.Prefix + "config`",
 				ConfUsage: "`" + CurrentConfig.Guild.Prefix + "config <SetName> <SetValue>`\nBotの設定を確認できます。\n何も引数を設定しなかった場合、現在の設定を表示します。\n引数を設定すると、その設定を変更できます。",
+				CostTitle: "`" + CurrentConfig.Guild.Prefix + "cost`",
+				CostUsage: "`" + CurrentConfig.Guild.Prefix + "config \nこのBotで消費された料金を確認できます。\n表示される料金は当月単位です。",
 			},
 		},
 		Config: configstr{
@@ -151,6 +155,8 @@ func loadLang() {
 				HelpUsage: "`" + CurrentConfig.Guild.Prefix + "help`\nYou can check how to use the Bot. \nSend reply to this message.",
 				ConfTitle: "`" + CurrentConfig.Guild.Prefix + "config`",
 				ConfUsage: "`" + CurrentConfig.Guild.Prefix + "config <SetName> <SetValue>`\nYou can check the configuration of Bot. \nIf you don't give any arguments, the current settings are displayed. \nIf you set any of the arguments, you can change its settings.",
+				CostTitle: "`" + CurrentConfig.Guild.Prefix + "cost`",
+				CostUsage: "`" + CurrentConfig.Guild.Prefix + "config \nYou can check the amount of fees consumed by this bot.\nThe fees displayed are on a monthly basis.",
 			},
 		},
 		Config: configstr{

@@ -66,7 +66,7 @@ func UnknownError(session *discordgo.Session, orgMsg *discordgo.MessageCreate, l
 	ReplyEmbed(session, orgMsg, msgEmbed)
 }
 
-func HandleCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild *config.Guild, data *config.Data, message *string) {
+func HandleCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild *config.Guild, data *config.Tokens, message *string) {
 	splitMsg := strings.SplitN(*message, " ", 2)
 	var param string
 	if len(splitMsg) == 2 {

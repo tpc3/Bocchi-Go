@@ -18,13 +18,13 @@ const openai = "https://api.openai.com/v1/chat/completions"
 
 var timeout *url.Error
 
-func GptRequest(msg *[]Message, data *config.Data, guild *config.Guild) (string, error) {
+func GptRequest(msg *[]Message, data *config.Tokens, guild *config.Guild) (string, error) {
 	apikey := config.CurrentConfig.Chat.ChatToken
 	response, err := getOpenAIResponse(&apikey, msg, data, guild)
 	return response, err
 }
 
-func getOpenAIResponse(apikey *string, messages *[]Message, data *config.Data, guild *config.Guild) (string, error) {
+func getOpenAIResponse(apikey *string, messages *[]Message, data *config.Tokens, guild *config.Guild) (string, error) {
 	requestBody := OpenaiRequest{
 		Model:    guild.Model,
 		Messages: *messages,
@@ -88,7 +88,7 @@ func getOpenAIResponse(apikey *string, messages *[]Message, data *config.Data, g
 	result := response.Choices[0].Messages.Content
 	tokens := response.Usages.TotalTokens
 
-	err = config.SaveData(data, tokens)
+	err = config.SaveData(data, guild, tokens)
 	if err != nil {
 		log.Fatal("Data save failed: ", err)
 	}

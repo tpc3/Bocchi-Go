@@ -24,7 +24,8 @@ const (
 
 var timeout *url.Error
 
-func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild *config.Guild, msg *string, data *config.Data) {
+func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild *config.Guild, msg *string, data *config.Tokens) {
+	session.MessageReactionAdd(orgMsg.ChannelID, orgMsg.ID, "🤔")
 	if *msg == "" {
 		ErrorReply(session, orgMsg, config.Lang[config.CurrentConfig.Guild.Lang].Error.SubCmd)
 		return
@@ -121,7 +122,7 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 	}
 
 	start := time.Now()
-	session.MessageReactionAdd(orgMsg.ChannelID, orgMsg.ID, "🤔")
+
 	response, err := chat.GptRequest(&msgChain, data, guild)
 	if err != nil {
 		if errors.As(err, &timeout) && timeout.Timeout() {

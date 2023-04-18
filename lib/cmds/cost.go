@@ -1,9 +1,6 @@
 package cmds
 
 import (
-	"io"
-	"log"
-	"net/http"
 	"strconv"
 
 	"github.com/bwmarrin/discordgo"
@@ -17,40 +14,31 @@ const (
 )
 
 func CostCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild *config.Guild) {
+	session.MessageReactionAdd(orgMsg.ChannelID, orgMsg.ID, "🤔")
 	embedMsg := embed.NewEmbed(session, orgMsg)
 	embedMsg.Title = "Cost"
-	embedMsg.Description = config.Lang[guild.Lang].Reply.Cost + calculationTokens(session, orgMsg, guild)
+	embedMsg.Description = config.Lang[guild.Lang].Reply.Cost + calculationTokens(guild)
+	session.MessageReactionRemove(orgMsg.ChannelID, orgMsg.ID, "🤔", session.State.User.ID)
 	ReplyEmbed(session, orgMsg, embedMsg)
 }
 
-func calculationTokens(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild *config.Guild) string {
+func calculationTokens(guild *config.Guild) string {
 
 	var rate float64
-	Tokens := float64(config.CurrentData.Totaltokens)
+	Tokens_gpt_35_turbo := float64(config.CurrentData.Tokens.Gpt_35_turbo)
+	Tokens_gpt_4 := float64(config.CurrentData.Tokens.Gpt_4)
+	Tokens_gpt_4_32k := float64(config.CurrentData.Tokens.Gpt_4_32k)
 
 	if config.Lang[guild.Lang].Lang == "japanese" {
-		url := "https://api.excelapi.org/currency/rate?pair=usd-jpy"
-		resp, err := http.Get(url)
-
-		if err != nil {
-			UnknownError(session, orgMsg, &guild.Lang, err)
-		}
-
-		defer resp.Body.Close()
-		byteArray, err := io.ReadAll(resp.Body)
-		if err != nil {
-			log.Fatal("Reading body error: ", err)
-		}
-
-		rate, err = strconv.ParseFloat(string(byteArray), 64)
-		if err != nil {
-			log.Fatal("Parsing rate error: ", err)
-		}
+		rate = config.CurrentRate
 	} else {
 		rate = 1
 	}
 
-	cost := (Tokens / 1000) * 0.002 * rate
+	cost_gpt_35 := (Tokens_gpt_35_turbo / 1000) * 0.0002 * rate
+	cost_gpt_4 := (Tokens_gpt_4 / 1000) * 0.003 * rate
+	cost_gpt_4_32k := (Tokens_gpt_4_32k / 1000) * 0.006 * rate
+	cost := cost_gpt_35 + cost_gpt_4 + cost_gpt_4_32k
 	coststr := strconv.FormatFloat(cost, 'f', 2, 64)
 	if coststr == "0.00" {
 		coststr = "0"

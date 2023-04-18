@@ -46,7 +46,7 @@ func MessageCreate(session *discordgo.Session, orgMsg *discordgo.MessageCreate) 
 	}
 	prefix := config.CurrentConfig.Guild.Prefix
 	guild := config.CurrentConfig.Guild
-	date := config.CurrentData
+	date := config.CurrentData.Tokens
 
 	isCmd, trimmedMsg := utils.TrimPrefix(orgMsg.Content, prefix, session.State.User.Mention())
 

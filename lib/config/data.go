@@ -2,8 +2,11 @@ package config
 
 import (
 	"errors"
+	"io"
 	"log"
+	"net/http"
 	"os"
+	"strconv"
 	"sync"
 
 	"github.com/robfig/cron/v3"
@@ -11,14 +14,22 @@ import (
 )
 
 type Data struct {
-	Totaltokens int
+	Tokens Tokens
+}
+
+type Tokens struct {
+	Gpt_35_turbo int
+	Gpt_4        int
+	Gpt_4_32k    int
 }
 
 const dataFile = "./data.yml"
 
-var CurrentData Data
-
-var mutex sync.Mutex
+var (
+	CurrentData Data
+	CurrentRate float64
+	mutex       sync.Mutex
+)
 
 func init() {
 	file, err := os.ReadFile(dataFile)
@@ -27,8 +38,14 @@ func init() {
 			log.Fatal("Data load failed: ", err)
 		}
 
+		initTokens := Tokens{
+			Gpt_35_turbo: 0,
+			Gpt_4:        0,
+			Gpt_4_32k:    0,
+		}
+
 		CurrentData = Data{
-			Totaltokens: 0,
+			Tokens: initTokens,
 		}
 
 		initdata, err := yaml.Marshal(CurrentData)
@@ -49,7 +66,7 @@ func init() {
 	}
 }
 
-func SaveData(data *Data, tokens int) error {
+func SaveData(data *Tokens, guild *Guild, tokens int) error {
 	file, err := os.ReadFile(dataFile)
 	if err != nil {
 		return err
@@ -60,12 +77,17 @@ func SaveData(data *Data, tokens int) error {
 		return err
 	}
 
-	if CurrentData.Totaltokens != tokens {
-		CurrentData.Totaltokens = CurrentData.Totaltokens + tokens
+	switch guild.Model {
+	case "gpt-3.5-turbo":
+		CurrentData.Tokens.Gpt_35_turbo += tokens
+	case "gpt-4":
+		CurrentData.Tokens.Gpt_4 += tokens
+	case "gpt-4-32k":
+		CurrentData.Tokens.Gpt_4_32k += tokens
 	}
 
 	newData := Data{
-		Totaltokens: CurrentData.Totaltokens,
+		Tokens: CurrentData.Tokens,
 	}
 
 	mutex.Lock()
@@ -85,14 +107,15 @@ func SaveData(data *Data, tokens int) error {
 func RunCron() {
 	c := cron.New()
 	c.AddFunc("0 0 1 * *", func() { ResetTokens() })
+	c.AddFunc("0 0 * * *", func() { GetRate() })
 	c.Start()
 }
 
 func ResetTokens() error {
-	CurrentData.Totaltokens = 0
+	CurrentData.Tokens.Gpt_35_turbo, CurrentData.Tokens.Gpt_4, CurrentData.Tokens.Gpt_4_32k = 0, 0, 0
 
 	newData := Data{
-		Totaltokens: CurrentData.Totaltokens,
+		Tokens: CurrentData.Tokens,
 	}
 
 	mutex.Lock()
@@ -108,4 +131,24 @@ func ResetTokens() error {
 	mutex.Unlock()
 
 	return nil
+}
+
+func GetRate() {
+	url := "https://api.excelapi.org/currency/rate?pair=usd-jpy"
+	resp, err := http.Get(url)
+
+	if err != nil {
+		log.Fatal("API for get rate error: ", err)
+	}
+
+	defer resp.Body.Close()
+	byteArray, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatal("Reading body error: ", err)
+	}
+
+	CurrentRate, err = strconv.ParseFloat(string(byteArray), 64)
+	if err != nil {
+		log.Fatal("Parsing rate error: ", err)
+	}
 }

@@ -33,42 +33,7 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 		return
 	}
 
-	var content string
-	var repnum int
-	var tmpnum, topnum float64
-
-	str := strings.Split(*msg, " ")
-
-	repnum = 1
-	topnum = 1
-	tmpnum = 1
-
-	for i, word := range str {
-		if word == "-l" && i+1 < len(str) {
-			value, err := strconv.Atoi(str[i+1])
-			if err == nil && value < 1 {
-				repnum = value
-			}
-		} else if word == "-p" && i+1 < len(str) {
-			value, err := strconv.ParseFloat(str[i+1], 64)
-			if err == nil && 0 <= value && value <= 1 {
-				topnum = value
-			}
-		} else if word == "-t" && i+1 < len(str) {
-			value, err := strconv.ParseFloat(str[i+1], 64)
-			if err == nil && 0 <= value && value <= 2 {
-				tmpnum = value
-			}
-		} else if !strings.HasPrefix(word, "-") {
-			if i == 0 {
-				content += word
-			} else if !strings.HasPrefix(str[i-1], "-") {
-				content += word
-			}
-		}
-	}
-
-	content = strings.TrimSpace(content)
+	content, repnum, tmpnum, topnum, systemstr := splitMsg(msg)
 
 	msgChain := []chat.Message{{Role: "user", Content: content}}
 
@@ -114,8 +79,8 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 				break
 			}
 			_, trimmed := utils.TrimPrefix(loopTargetMsg.Content, config.CurrentConfig.Guild.Prefix+Chat+" ", session.State.User.Mention())
-			msgChain = append(msgChain, chat.Message{Role: "user", Content: trimmed})
-
+			content, repnum, tmpnum, topnum, systemstr = splitMsg(&trimmed)
+			msgChain = append(msgChain, chat.Message{Role: "user", Content: content})
 			if loopTargetMsg.ReferencedMessage == nil {
 				break
 			}
@@ -136,6 +101,9 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 
 		reverse(msgChain)
 	}
+
+	sysSlice := chat.Message{Role: "system", Content: systemstr}
+	msgChain = append([]chat.Message{sysSlice}, msgChain...)
 
 	start := time.Now()
 
@@ -178,4 +146,43 @@ func reverse(s interface{}) {
 	for i, j := 0, n-1; i < j; i, j = i+1, j-1 {
 		swap(i, j)
 	}
+}
+
+func splitMsg(msg *string) (string, int, float64, float64, string) {
+	var content, systemstr string
+	var repnum int
+	var tmpnum, topnum float64
+
+	repnum = 1
+	topnum = 1
+	tmpnum = 1
+
+	str := strings.Split(*msg, " ")
+	for i, word := range str {
+		if word == "-l" && i+1 < len(str) {
+			value, err := strconv.Atoi(str[i+1])
+			if err == nil && value < 1 {
+				repnum = value
+			}
+		} else if word == "-p" && i+1 < len(str) {
+			value, err := strconv.ParseFloat(str[i+1], 64)
+			if err == nil && 0 <= value && value <= 1 {
+				topnum = value
+			}
+		} else if word == "-t" && i+1 < len(str) {
+			value, err := strconv.ParseFloat(str[i+1], 64)
+			if err == nil && 0 <= value && value <= 2 {
+				tmpnum = value
+			}
+		} else if word == "-s" && i+1 < len(str) {
+			systemstr = str[i+1]
+		} else if !strings.HasPrefix(word, "-") {
+			if i == 0 {
+				content += word
+			} else if !strings.HasPrefix(str[i-1], "-") {
+				content += word
+			}
+		}
+	}
+	return content, repnum, tmpnum, topnum, systemstr
 }

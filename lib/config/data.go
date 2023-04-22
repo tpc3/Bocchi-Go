@@ -32,6 +32,9 @@ var (
 )
 
 func init() {
+	RunCron()
+	GetRate()
+
 	file, err := os.ReadFile(dataFile)
 	if err != nil {
 		if !errors.Is(err, os.ErrNotExist) {
@@ -142,6 +145,11 @@ func GetRate() {
 	}
 
 	defer resp.Body.Close()
+	if resp.StatusCode != 200 {
+		CurrentRate = 130
+		return
+	}
+
 	byteArray, err := io.ReadAll(resp.Body)
 	if err != nil {
 		log.Fatal("Reading body error: ", err)

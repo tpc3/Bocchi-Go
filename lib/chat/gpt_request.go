@@ -18,16 +18,18 @@ const openai = "https://api.openai.com/v1/chat/completions"
 
 var timeout *url.Error
 
-func GptRequest(msg *[]Message, data *config.Tokens, guild *config.Guild) (string, error) {
+func GptRequest(msg *[]Message, data *config.Tokens, guild *config.Guild, topnum float64, tempnum float64) (string, error) {
 	apikey := config.CurrentConfig.Chat.ChatToken
-	response, err := getOpenAIResponse(&apikey, msg, data, guild)
+	response, err := getOpenAIResponse(&apikey, msg, data, guild, topnum, tempnum)
 	return response, err
 }
 
-func getOpenAIResponse(apikey *string, messages *[]Message, data *config.Tokens, guild *config.Guild) (string, error) {
+func getOpenAIResponse(apikey *string, messages *[]Message, data *config.Tokens, guild *config.Guild, topnum float64, tempnum float64) (string, error) {
 	requestBody := OpenaiRequest{
-		Model:    guild.Model,
-		Messages: *messages,
+		Model:       guild.Model,
+		Messages:    *messages,
+		Top_p:       topnum,
+		Temperature: tempnum,
 	}
 
 	requestJSON, err := json.Marshal(requestBody)

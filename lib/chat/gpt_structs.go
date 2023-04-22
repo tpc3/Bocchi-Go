@@ -1,8 +1,10 @@
 package chat
 
 type OpenaiRequest struct {
-	Model    string    `json:"model"`
-	Messages []Message `json:"messages"`
+	Model       string    `json:"model"`
+	Messages    []Message `json:"messages"`
+	Top_p       float64   `json:"top_p"`
+	Temperature float64   `json:"temperature"`
 }
 
 type OpenaiResponse struct {

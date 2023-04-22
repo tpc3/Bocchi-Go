@@ -18,8 +18,10 @@ import (
 )
 
 const (
-	Chat     = "chat"
-	Continue = "-l "
+	Chat        = "chat"
+	Continue    = "-l "
+	Temperature = "-t"
+	Top_p       = "-p"
 )
 
 var timeout *url.Error
@@ -30,27 +32,43 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 		ErrorReply(session, orgMsg, config.Lang[config.CurrentConfig.Guild.Lang].Error.SubCmd)
 		return
 	}
-	var content, param string
-	var num int
-	if strings.Contains(*msg, Continue) {
-		if strings.HasPrefix(*msg, "-l ") {
-			content = strings.SplitN(*msg, " ", 3)[2]
-			param = strings.SplitN(*msg, " ", 3)[1]
-			num, _ = strconv.Atoi(param)
-		} else {
-			content = strings.SplitN(*msg, " -l ", 2)[0]
-			param = strings.SplitN(*msg, " -l ", 2)[1]
-			num, _ = strconv.Atoi(param)
+
+	var content string
+	var repnum int
+	var tmpnum, topnum float64
+
+	str := strings.Split(*msg, " ")
+
+	repnum = 1
+	topnum = 1
+	tmpnum = 1
+
+	for i, word := range str {
+		if word == "-l" && i+1 < len(str) {
+			value, err := strconv.Atoi(str[i+1])
+			if err == nil && value < 1 {
+				repnum = value
+			}
+		} else if word == "-p" && i+1 < len(str) {
+			value, err := strconv.ParseFloat(str[i+1], 64)
+			if err == nil && 0 <= value && value <= 1 {
+				topnum = value
+			}
+		} else if word == "-t" && i+1 < len(str) {
+			value, err := strconv.ParseFloat(str[i+1], 64)
+			if err == nil && 0 <= value && value <= 2 {
+				tmpnum = value
+			}
+		} else if !strings.HasPrefix(word, "-") {
+			if i == 0 {
+				content += word
+			} else if !strings.HasPrefix(str[i-1], "-") {
+				content += word
+			}
 		}
-	} else {
-		content = *msg
-		if strings.HasPrefix(content, "-l ") {
-			content = strings.TrimPrefix(content, "-l ")
-		} else {
-			content = strings.TrimSuffix(content, " -l")
-		}
-		num = 2
 	}
+
+	content = strings.TrimSpace(content)
 
 	msgChain := []chat.Message{{Role: "user", Content: content}}
 
@@ -67,7 +85,7 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 			}
 		}
 		// Get reply msgs recursively
-		for i := 0; i < num; i++ {
+		for i := 0; i < repnum; i++ {
 			if loopTargetMsg.Author.ID != session.State.User.ID {
 				break
 			} else if loopTargetMsg.Embeds[0].Color != embed.ColorGPT { //ToDo: Better handling
@@ -92,9 +110,7 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 				}
 			}
 
-			if loopTargetMsg.Author.ID != orgMsg.Author.ID {
-				break
-			} else if loopTargetMsg.Content == "" {
+			if loopTargetMsg.Content == "" {
 				break
 			}
 			_, trimmed := utils.TrimPrefix(loopTargetMsg.Content, config.CurrentConfig.Guild.Prefix+Chat+" ", session.State.User.Mention())
@@ -123,7 +139,7 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 
 	start := time.Now()
 
-	response, err := chat.GptRequest(&msgChain, data, guild)
+	response, err := chat.GptRequest(&msgChain, data, guild, topnum, tmpnum)
 	if err != nil {
 		if errors.As(err, &timeout) && timeout.Timeout() {
 			ErrorReply(session, orgMsg, config.Lang[guild.Lang].Error.TimeOut)

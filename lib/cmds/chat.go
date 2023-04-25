@@ -33,7 +33,7 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 		return
 	}
 
-	content, repnum, tmpnum, topnum, systemstr := splitMsg(msg)
+	content, repnum, tmpnum, topnum, systemstr, model := splitMsg(msg, guild)
 
 	msgChain := []chat.Message{{Role: "user", Content: content}}
 
@@ -79,7 +79,7 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 				break
 			}
 			_, trimmed := utils.TrimPrefix(loopTargetMsg.Content, config.CurrentConfig.Guild.Prefix+Chat+" ", session.State.User.Mention())
-			content, repnum, tmpnum, topnum, systemstr = splitMsg(&trimmed)
+			content, repnum, tmpnum, topnum, systemstr, model = splitMsg(&trimmed, guild)
 			msgChain = append(msgChain, chat.Message{Role: "user", Content: content})
 			if loopTargetMsg.ReferencedMessage == nil {
 				break
@@ -105,9 +105,20 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 	sysSlice := chat.Message{Role: "system", Content: systemstr}
 	msgChain = append([]chat.Message{sysSlice}, msgChain...)
 
+	var max_tokens int
+	if model == "gpt-3.5-turbo" && config.CurrentLimitToken > 4096 {
+		max_tokens = 4096
+	} else if model == "gpt-4" && config.CurrentLimitToken > 8192 {
+		max_tokens = 8192
+	} else if model == "gpt-4-32k" && config.CurrentLimitToken > 32768 {
+		max_tokens = 32768
+	} else {
+		max_tokens = guild.MaxToken
+	}
+
 	start := time.Now()
 
-	response, err := chat.GptRequest(&msgChain, data, guild, topnum, tmpnum)
+	response, err := chat.GptRequest(&msgChain, data, guild, topnum, tmpnum, model, max_tokens)
 	if err != nil {
 		if errors.As(err, &timeout) && timeout.Timeout() {
 			ErrorReply(session, orgMsg, config.Lang[guild.Lang].Error.TimeOut)
@@ -148,11 +159,12 @@ func reverse(s interface{}) {
 	}
 }
 
-func splitMsg(msg *string) (string, int, float64, float64, string) {
-	var content, systemstr string
+func splitMsg(msg *string, guild *config.Guild) (string, int, float64, float64, string, string) {
+	var content, systemstr, modelstr string
 	var repnum int
 	var tmpnum, topnum float64
 
+	modelstr = guild.Model
 	repnum = 1
 	topnum = 1
 	tmpnum = 1
@@ -176,6 +188,8 @@ func splitMsg(msg *string) (string, int, float64, float64, string) {
 			}
 		} else if word == "-s" && i+1 < len(str) {
 			systemstr = str[i+1]
+		} else if word == "-m" && i+1 < len(str) {
+			modelstr = str[i+1]
 		} else if !strings.HasPrefix(word, "-") {
 			if i == 0 {
 				content += word
@@ -184,5 +198,5 @@ func splitMsg(msg *string) (string, int, float64, float64, string) {
 			}
 		}
 	}
-	return content, repnum, tmpnum, topnum, systemstr
+	return content, repnum, tmpnum, topnum, systemstr, modelstr
 }

@@ -34,6 +34,7 @@ type Guild struct {
 const configFile = "./config.yml"
 
 var CurrentConfig Config
+var CurrentLimitToken int
 
 func init() {
 	file, err := os.ReadFile(configFile)
@@ -51,6 +52,11 @@ func init() {
 	}
 	if CurrentConfig.Discord.Token == "" {
 		log.Fatal("Token is empty")
+	}
+
+	CurrentLimitToken = CheckLimitToken(CurrentConfig.Guild.Model)
+	if CurrentConfig.Guild.MaxToken > CurrentLimitToken {
+		log.Fatal("MaxToken is orver")
 	}
 
 	loadLang()
@@ -108,5 +114,23 @@ func SaveGuild(guild *Guild) error {
 	if err != nil {
 		return err
 	}
+
+	CurrentLimitToken = CheckLimitToken(guild.Model)
+
 	return nil
+}
+
+func CheckLimitToken(model string) int {
+	var token int
+
+	switch model {
+	case "gpt-3.5-turbo":
+		token = 4096
+	case "gpt-4":
+		token = 8192
+	case "gpt-4-32k":
+		token = 32768
+	}
+
+	return token
 }

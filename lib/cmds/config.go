@@ -107,7 +107,7 @@ func ConfigCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guil
 	case "maxtoken":
 		maxtoken := split[1]
 		guild.MaxToken, _ = strconv.Atoi(maxtoken)
-		if guild.MaxToken < 1 || guild.MaxToken > 4095 {
+		if guild.MaxToken < 1 {
 			ErrorReply(session, orgMsg, config.Lang[guild.Lang].Error.MustValue)
 			return
 		}

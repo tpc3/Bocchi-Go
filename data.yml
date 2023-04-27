@@ -1,1 +1,4 @@
-totaltokens: 0
+tokens:
+  gpt_35_turbo: 0
+  gpt_4: 0
+  gpt_4_32k: 0

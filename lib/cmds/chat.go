@@ -76,7 +76,7 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 				break
 			}
 			_, trimmed := utils.TrimPrefix(loopTargetMsg.Content, config.CurrentConfig.Guild.Prefix+Chat+" ", session.State.User.Mention())
-			content, repnum, tmpnum, topnum, systemstr, model, filter = splitMsg(&trimmed, guild)
+			content, _, tmpnum, topnum, systemstr, model, filter = splitMsg(&trimmed, guild)
 			msgChain = append(msgChain, chat.Message{Role: "user", Content: content})
 			if loopTargetMsg.ReferencedMessage == nil {
 				break
@@ -148,7 +148,9 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 	exec := time.Since(start).Seconds()
 	dulation := strconv.FormatFloat(exec, 'f', 2, 64)
 	embedMsg := embed.NewEmbed(session, orgMsg)
-	if utf8.RuneCountInString(content) > 50 {
+	if filter {
+		embedMsg.Title = "Social Filter"
+	} else if utf8.RuneCountInString(content) > 50 {
 		embedMsg.Title = string([]rune(content)[:50]) + "..."
 	} else {
 		embedMsg.Title = content
@@ -186,7 +188,7 @@ func splitMsg(msg *string, guild *config.Guild) (string, int, float64, float64, 
 	for i, word := range str {
 		if word == "-l" && i+1 < len(str) {
 			value, err := strconv.Atoi(str[i+1])
-			if err == nil && value < 1 {
+			if err == nil && value > 1 {
 				repnum = value
 			}
 		} else if word == "-p" && i+1 < len(str) {

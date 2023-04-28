@@ -54,7 +54,7 @@ type cmdusagestr struct {
 	ChatTitle   string
 	ChatUsage   string
 	FilterTitle string
-	FIlterUsage string
+	FilterUsage string
 	PingTitle   string
 	PingUsage   string
 	HelpTitle   string
@@ -92,7 +92,7 @@ func loadLang() {
 				ChatTitle:   "`" + CurrentConfig.Guild.Prefix + "chat`",
 				ChatUsage:   "`" + CurrentConfig.Guild.Prefix + "chat " + "<message>`\nChatGPTに文章を送信します。\n🤔をリアクションした場合は処理を通すのに成功していますので、処理が完了するまでお待ちください。\n処理が完了すると返信します。\n`-l <int>`でログを読み込むことが出来ます。",
 				FilterTitle: "`" + CurrentConfig.Guild.Prefix + "chat`",
-				FIlterUsage: "`" + CurrentConfig.Guild.Prefix + "chat " + "-f`\n社会性フィルターを搭載します。このパラメーターが存在する場合、すべての指示において社会性フィルターに上書きされます。",
+				FilterUsage: "`" + CurrentConfig.Guild.Prefix + "chat " + "-f`\n社会性フィルターを搭載します。このパラメーターが存在する場合、すべての指示において社会性フィルターに上書きされます。",
 				PingTitle:   "`" + CurrentConfig.Guild.Prefix + "ping`",
 				PingUsage:   "`" + CurrentConfig.Guild.Prefix + "ping`\nBotが起動状態か確認できます。\n返信とともに🏓をリアクションした場合、Botが利用できる状態です。",
 				HelpTitle:   "`" + CurrentConfig.Guild.Prefix + "help`",
@@ -147,7 +147,7 @@ func loadLang() {
 				ChatTitle:   "`" + CurrentConfig.Guild.Prefix + "chat`",
 				ChatUsage:   "`" + CurrentConfig.Guild.Prefix + "chat " + "<message>`\nSend a message to ChatGPT.\nIf Bot reacted 🤔, your message has been passing the process, so please wait for the process to complete.\nWhen the process is complete, Bot send reply to an embed.\nAlso, you can load logs by `-r <int>`.",
 				FilterTitle: "`" + CurrentConfig.Guild.Prefix + "chat`",
-				FIlterUsage: "`" + CurrentConfig.Guild.Prefix + "chat " + "-f`\nEquip it with a social filter. If this parameter exists, it will be overwritten by the social filter in all instructions.",
+				FilterUsage: "`" + CurrentConfig.Guild.Prefix + "chat " + "-f`\nEquip it with a social filter. If this parameter exists, it will be overwritten by the social filter in all instructions.",
 				PingTitle:   "`" + CurrentConfig.Guild.Prefix + "ping`",
 				PingUsage:   "`" + CurrentConfig.Guild.Prefix + "ping`\nYou can check if the Bot is in startup status. \nIf Bot has reacted 🏓 and sent reply to an embed to your ping message, Bot is in startup status.",
 				HelpTitle:   "`" + CurrentConfig.Guild.Prefix + "help`",

@@ -35,6 +35,10 @@ func UsageReply(session *discordgo.Session, orgMsg *discordgo.MessageCreate) {
 		Value: config.Lang[config.CurrentConfig.Guild.Lang].Usage.Cmd.ChatUsage,
 	})
 	usage.Fields = append(usage.Fields, &discordgo.MessageEmbedField{
+		Name:  config.Lang[config.CurrentConfig.Guild.Lang].Usage.Cmd.FilterTitle,
+		Value: config.Lang[config.CurrentConfig.Guild.Lang].Usage.Cmd.FilterUsage,
+	})
+	usage.Fields = append(usage.Fields, &discordgo.MessageEmbedField{
 		Name:  config.Lang[config.CurrentConfig.Guild.Lang].Usage.Cmd.PingTitle,
 		Value: config.Lang[config.CurrentConfig.Guild.Lang].Usage.Cmd.PingUsage,
 	})

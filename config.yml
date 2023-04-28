@@ -8,7 +8,6 @@ guild:
   prefix: b.
   lang: japanese
   model: gpt-3.5-turbo
-  maxtoken: 4095
   timeout: 120
 user_blacklist:
 - "0000000000000000000"

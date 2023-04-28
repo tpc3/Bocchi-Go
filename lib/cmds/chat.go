@@ -31,7 +31,6 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 	}
 
 	content, repnum, tmpnum, topnum, systemstr, model, filter := splitMsg(msg, guild)
-	log.Print(content, " ,", repnum, " ,", tmpnum, " ,", topnum, " ,", systemstr, " ,", model, " ,", filter)
 
 	msgChain := []chat.Message{{Role: "user", Content: content}}
 
@@ -106,9 +105,7 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 	}
 
 	if filter {
-		log.Print("Hi, in filter!")
 		if orgMsg.ReferencedMessage != nil {
-			log.Print("Hi, in orgMsg.ReferencedMessage != nil !")
 			filterMsg, err := session.State.Message(orgMsg.ChannelID, orgMsg.ReferencedMessage.ID)
 			if err != nil {
 				filterMsg, err = session.ChannelMessage(orgMsg.ChannelID, orgMsg.ReferencedMessage.ID)
@@ -133,8 +130,6 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 	}
 
 	start := time.Now()
-
-	log.Print(msgChain)
 
 	response, err := chat.GptRequest(&msgChain, data, guild, topnum, tmpnum, model)
 	if err != nil {

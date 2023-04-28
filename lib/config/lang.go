@@ -51,16 +51,18 @@ type replystr struct {
 }
 
 type cmdusagestr struct {
-	ChatTitle string
-	ChatUsage string
-	PingTitle string
-	PingUsage string
-	HelpTitle string
-	HelpUsage string
-	ConfTitle string
-	ConfUsage string
-	CostTitle string
-	CostUsage string
+	ChatTitle   string
+	ChatUsage   string
+	FilterTitle string
+	FIlterUsage string
+	PingTitle   string
+	PingUsage   string
+	HelpTitle   string
+	HelpUsage   string
+	ConfTitle   string
+	ConfUsage   string
+	CostTitle   string
+	CostUsage   string
 }
 
 type configusagestr struct {
@@ -87,16 +89,18 @@ func loadLang() {
 				Lang:   "言語を指定します。現在の設定は`" + CurrentConfig.Guild.Lang + "`です。",
 			},
 			Cmd: cmdusagestr{
-				ChatTitle: "`" + CurrentConfig.Guild.Prefix + "chat`",
-				ChatUsage: "`" + CurrentConfig.Guild.Prefix + "chat " + "<message>`\nChatGPTに文章を送信します。\n🤔をリアクションした場合は処理を通すのに成功していますので、処理が完了するまでお待ちください。\n処理が完了すると返信します。\n`-l <int>`でログを読み込むことが出来ます。",
-				PingTitle: "`" + CurrentConfig.Guild.Prefix + "ping`",
-				PingUsage: "`" + CurrentConfig.Guild.Prefix + "ping`\nBotが起動状態か確認できます。\n返信とともに🏓をリアクションした場合、Botが利用できる状態です。",
-				HelpTitle: "`" + CurrentConfig.Guild.Prefix + "help`",
-				HelpUsage: "`" + CurrentConfig.Guild.Prefix + "help`\nBotの使い方を確認できます。\nこのメッセージを返信します。",
-				ConfTitle: "`" + CurrentConfig.Guild.Prefix + "config`",
-				ConfUsage: "`" + CurrentConfig.Guild.Prefix + "config <SetName> <SetValue>`\nBotの設定を確認できます。\n何も引数を設定しなかった場合、現在の設定を表示します。\n引数を設定すると、その設定を変更できます。",
-				CostTitle: "`" + CurrentConfig.Guild.Prefix + "cost`",
-				CostUsage: "`" + CurrentConfig.Guild.Prefix + "config \nこのBotで消費された料金を確認できます。\n表示される料金は当月単位です。",
+				ChatTitle:   "`" + CurrentConfig.Guild.Prefix + "chat`",
+				ChatUsage:   "`" + CurrentConfig.Guild.Prefix + "chat " + "<message>`\nChatGPTに文章を送信します。\n🤔をリアクションした場合は処理を通すのに成功していますので、処理が完了するまでお待ちください。\n処理が完了すると返信します。\n`-l <int>`でログを読み込むことが出来ます。",
+				FilterTitle: "`" + CurrentConfig.Guild.Prefix + "chat`",
+				FIlterUsage: "`" + CurrentConfig.Guild.Prefix + "chat " + "-f`\n社会性フィルターを搭載します。このパラメーターが存在する場合、すべての指示において社会性フィルターに上書きされます。",
+				PingTitle:   "`" + CurrentConfig.Guild.Prefix + "ping`",
+				PingUsage:   "`" + CurrentConfig.Guild.Prefix + "ping`\nBotが起動状態か確認できます。\n返信とともに🏓をリアクションした場合、Botが利用できる状態です。",
+				HelpTitle:   "`" + CurrentConfig.Guild.Prefix + "help`",
+				HelpUsage:   "`" + CurrentConfig.Guild.Prefix + "help`\nBotの使い方を確認できます。\nこのメッセージを返信します。",
+				ConfTitle:   "`" + CurrentConfig.Guild.Prefix + "config`",
+				ConfUsage:   "`" + CurrentConfig.Guild.Prefix + "config <SetName> <SetValue>`\nBotの設定を確認できます。\n何も引数を設定しなかった場合、現在の設定を表示します。\n引数を設定すると、その設定を変更できます。",
+				CostTitle:   "`" + CurrentConfig.Guild.Prefix + "cost`",
+				CostUsage:   "`" + CurrentConfig.Guild.Prefix + "config \nこのBotで消費された料金を確認できます。\n表示される料金は当月単位です。",
 			},
 		},
 		Config: configstr{
@@ -140,16 +144,18 @@ func loadLang() {
 				Lang:   "Specify language.\nCurrent config is `" + CurrentConfig.Guild.Lang + "`.",
 			},
 			Cmd: cmdusagestr{
-				ChatTitle: "`" + CurrentConfig.Guild.Prefix + "chat`",
-				ChatUsage: "`" + CurrentConfig.Guild.Prefix + "chat " + "<message>`\nSend a message to ChatGPT.\nIf Bot reacted 🤔, your message has been passing the process, so please wait for the process to complete.\nWhen the process is complete, Bot send reply to an embed.\nAlso, you can load logs by `-r <int>`.",
-				PingTitle: "`" + CurrentConfig.Guild.Prefix + "ping`",
-				PingUsage: "`" + CurrentConfig.Guild.Prefix + "ping`\nYou can check if the Bot is in startup status. \nIf Bot has reacted 🏓 and sent reply to an embed to your ping message, Bot is in startup status.",
-				HelpTitle: "`" + CurrentConfig.Guild.Prefix + "help`",
-				HelpUsage: "`" + CurrentConfig.Guild.Prefix + "help`\nYou can check how to use the Bot. \nSend reply to this message.",
-				ConfTitle: "`" + CurrentConfig.Guild.Prefix + "config`",
-				ConfUsage: "`" + CurrentConfig.Guild.Prefix + "config <SetName> <SetValue>`\nYou can check the configuration of Bot. \nIf you don't give any arguments, the current settings are displayed. \nIf you set any of the arguments, you can change its settings.",
-				CostTitle: "`" + CurrentConfig.Guild.Prefix + "cost`",
-				CostUsage: "`" + CurrentConfig.Guild.Prefix + "config \nYou can check the amount of fees consumed by this bot.\nThe fees displayed are on a monthly basis.",
+				ChatTitle:   "`" + CurrentConfig.Guild.Prefix + "chat`",
+				ChatUsage:   "`" + CurrentConfig.Guild.Prefix + "chat " + "<message>`\nSend a message to ChatGPT.\nIf Bot reacted 🤔, your message has been passing the process, so please wait for the process to complete.\nWhen the process is complete, Bot send reply to an embed.\nAlso, you can load logs by `-r <int>`.",
+				FilterTitle: "`" + CurrentConfig.Guild.Prefix + "chat`",
+				FIlterUsage: "`" + CurrentConfig.Guild.Prefix + "chat " + "-f`\nEquip it with a social filter. If this parameter exists, it will be overwritten by the social filter in all instructions.",
+				PingTitle:   "`" + CurrentConfig.Guild.Prefix + "ping`",
+				PingUsage:   "`" + CurrentConfig.Guild.Prefix + "ping`\nYou can check if the Bot is in startup status. \nIf Bot has reacted 🏓 and sent reply to an embed to your ping message, Bot is in startup status.",
+				HelpTitle:   "`" + CurrentConfig.Guild.Prefix + "help`",
+				HelpUsage:   "`" + CurrentConfig.Guild.Prefix + "help`\nYou can check how to use the Bot. \nSend reply to this message.",
+				ConfTitle:   "`" + CurrentConfig.Guild.Prefix + "config`",
+				ConfUsage:   "`" + CurrentConfig.Guild.Prefix + "config <SetName> <SetValue>`\nYou can check the configuration of Bot. \nIf you don't give any arguments, the current settings are displayed. \nIf you set any of the arguments, you can change its settings.",
+				CostTitle:   "`" + CurrentConfig.Guild.Prefix + "cost`",
+				CostUsage:   "`" + CurrentConfig.Guild.Prefix + "config \nYou can check the amount of fees consumed by this bot.\nThe fees displayed are on a monthly basis.",
 			},
 		},
 		Config: configstr{

@@ -36,10 +36,6 @@ func ConfigUsage(session *discordgo.Session, orgMsg *discordgo.MessageCreate, gu
 		Value: config.Lang[guild.Lang].Usage.Config.Lang,
 	})
 	msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{
-		Name:  "maxtoken <int>",
-		Value: config.Lang[guild.Lang].Usage.Config.MaxToken,
-	})
-	msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{
 		Name:  "timeout <int>",
 		Value: config.Lang[guild.Lang].Usage.Config.TimeOut,
 	})
@@ -62,10 +58,6 @@ func ConfigCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guil
 		msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{
 			Name:  "model",
 			Value: guild.Model,
-		})
-		msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{
-			Name:  "maxtoken",
-			Value: strconv.Itoa(guild.MaxToken),
 		})
 		msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{
 			Name:  "timeout",
@@ -104,15 +96,6 @@ func ConfigCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guil
 			key = config.Lang[guild.Lang].Config.Item.Model
 			item = guild.Model
 		}
-	case "maxtoken":
-		maxtoken := split[1]
-		guild.MaxToken, _ = strconv.Atoi(maxtoken)
-		if guild.MaxToken < 1 {
-			ErrorReply(session, orgMsg, config.Lang[guild.Lang].Error.MustValue)
-			return
-		}
-		key = config.Lang[guild.Lang].Config.Item.Maxtoken
-		item = maxtoken
 	case "timeout":
 		timeout := split[1]
 		guild.Timeout, _ = strconv.Atoi(timeout)

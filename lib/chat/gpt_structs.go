@@ -3,7 +3,6 @@ package chat
 type OpenaiRequest struct {
 	Model       string    `json:"model"`
 	Messages    []Message `json:"messages"`
-	MaxTokens   int       `json:"max_tokens"`
 	Top_p       float64   `json:"top_p"`
 	Temperature float64   `json:"temperature"`
 }

@@ -105,20 +105,9 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 	sysSlice := chat.Message{Role: "system", Content: systemstr}
 	msgChain = append([]chat.Message{sysSlice}, msgChain...)
 
-	var max_tokens int
-	if model == "gpt-3.5-turbo" && config.CurrentLimitToken > 4096 {
-		max_tokens = 4096
-	} else if model == "gpt-4" && config.CurrentLimitToken > 8192 {
-		max_tokens = 8192
-	} else if model == "gpt-4-32k" && config.CurrentLimitToken > 32768 {
-		max_tokens = 32768
-	} else {
-		max_tokens = guild.MaxToken
-	}
-
 	start := time.Now()
 
-	response, err := chat.GptRequest(&msgChain, data, guild, topnum, tmpnum, model, max_tokens)
+	response, err := chat.GptRequest(&msgChain, data, guild, topnum, tmpnum, model)
 	if err != nil {
 		if errors.As(err, &timeout) && timeout.Timeout() {
 			ErrorReply(session, orgMsg, config.Lang[guild.Lang].Error.TimeOut)

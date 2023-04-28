@@ -1,9 +1,5 @@
 package config
 
-import (
-	"strconv"
-)
-
 type Strings struct {
 	Lang     string
 	CurrConf string
@@ -68,11 +64,10 @@ type cmdusagestr struct {
 }
 
 type configusagestr struct {
-	Desc     string
-	Prefix   string
-	Lang     string
-	MaxToken string
-	TimeOut  string
+	Desc    string
+	Prefix  string
+	Lang    string
+	TimeOut string
 }
 
 var (
@@ -87,10 +82,9 @@ func loadLang() {
 		Usage: usagestr{
 			Title: "使い方: ",
 			Config: configusagestr{
-				Desc:     "各種設定を行います。\n設定項目と内容は以下をご確認ください。",
-				Prefix:   "コマンドの接頭詞を指定します。\n現在の設定は`" + CurrentConfig.Guild.Prefix + "`です。",
-				Lang:     "言語を指定します。現在の設定は`" + CurrentConfig.Guild.Lang + "`です。",
-				MaxToken: "使用する最大トークン数を指定します。現在の設定は`" + strconv.Itoa(CurrentConfig.Guild.MaxToken) + "`です。",
+				Desc:   "各種設定を行います。\n設定項目と内容は以下をご確認ください。",
+				Prefix: "コマンドの接頭詞を指定します。\n現在の設定は`" + CurrentConfig.Guild.Prefix + "`です。",
+				Lang:   "言語を指定します。現在の設定は`" + CurrentConfig.Guild.Lang + "`です。",
 			},
 			Cmd: cmdusagestr{
 				ChatTitle: "`" + CurrentConfig.Guild.Prefix + "chat`",
@@ -141,10 +135,9 @@ func loadLang() {
 		Usage: usagestr{
 			Title: "Usage: ",
 			Config: configusagestr{
-				Desc:     "Do configuration.\nItem list is below.",
-				Prefix:   "Specify command prefix.\nCurrent config is `" + CurrentConfig.Guild.Prefix + "`.",
-				Lang:     "Specify language.\nCurrent config is `" + CurrentConfig.Guild.Lang + "`.",
-				MaxToken: "Specify MaxTokens.\nCurrent config is `" + strconv.Itoa(CurrentConfig.Guild.MaxToken) + "`.",
+				Desc:   "Do configuration.\nItem list is below.",
+				Prefix: "Specify command prefix.\nCurrent config is `" + CurrentConfig.Guild.Prefix + "`.",
+				Lang:   "Specify language.\nCurrent config is `" + CurrentConfig.Guild.Lang + "`.",
 			},
 			Cmd: cmdusagestr{
 				ChatTitle: "`" + CurrentConfig.Guild.Prefix + "chat`",

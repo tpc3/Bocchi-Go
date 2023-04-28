@@ -24,11 +24,10 @@ type Chat struct {
 }
 
 type Guild struct {
-	Prefix   string
-	Lang     string
-	Model    string
-	MaxToken int
-	Timeout  int
+	Prefix  string
+	Lang    string
+	Model   string
+	Timeout int
 }
 
 const configFile = "./config.yml"
@@ -52,11 +51,6 @@ func init() {
 	}
 	if CurrentConfig.Discord.Token == "" {
 		log.Fatal("Token is empty")
-	}
-
-	CurrentLimitToken = CheckLimitToken(CurrentConfig.Guild.Model)
-	if CurrentConfig.Guild.MaxToken > CurrentLimitToken {
-		log.Fatal("MaxToken is orver")
 	}
 
 	loadLang()
@@ -90,11 +84,10 @@ func SaveGuild(guild *Guild) error {
 		return err
 	}
 
-	if guild.Prefix != CurrentConfig.Guild.Prefix || guild.Model != CurrentConfig.Guild.Model || guild.Lang != CurrentConfig.Guild.Lang || guild.MaxToken != CurrentConfig.Guild.MaxToken || guild.Timeout != CurrentConfig.Guild.Timeout {
+	if guild.Prefix != CurrentConfig.Guild.Prefix || guild.Model != CurrentConfig.Guild.Model || guild.Lang != CurrentConfig.Guild.Lang || guild.Timeout != CurrentConfig.Guild.Timeout {
 		CurrentConfig.Guild.Prefix = guild.Prefix
 		CurrentConfig.Guild.Lang = guild.Lang
 		CurrentConfig.Guild.Model = guild.Model
-		CurrentConfig.Guild.MaxToken = guild.MaxToken
 		CurrentConfig.Guild.Timeout = guild.Timeout
 	}
 

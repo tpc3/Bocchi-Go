@@ -18,10 +18,7 @@ import (
 )
 
 const (
-	Chat        = "chat"
-	Continue    = "-l "
-	Temperature = "-t"
-	Top_p       = "-p"
+	Chat = "chat"
 )
 
 var timeout *url.Error
@@ -33,7 +30,8 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 		return
 	}
 
-	content, repnum, tmpnum, topnum, systemstr, model := splitMsg(msg, guild)
+	content, repnum, tmpnum, topnum, systemstr, model, filter := splitMsg(msg, guild)
+	log.Print(content, " ,", repnum, " ,", tmpnum, " ,", topnum, " ,", systemstr, " ,", model, " ,", filter)
 
 	msgChain := []chat.Message{{Role: "user", Content: content}}
 
@@ -79,7 +77,7 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 				break
 			}
 			_, trimmed := utils.TrimPrefix(loopTargetMsg.Content, config.CurrentConfig.Guild.Prefix+Chat+" ", session.State.User.Mention())
-			content, repnum, tmpnum, topnum, systemstr, model = splitMsg(&trimmed, guild)
+			content, repnum, tmpnum, topnum, systemstr, model, filter = splitMsg(&trimmed, guild)
 			msgChain = append(msgChain, chat.Message{Role: "user", Content: content})
 			if loopTargetMsg.ReferencedMessage == nil {
 				break
@@ -102,10 +100,41 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 		reverse(msgChain)
 	}
 
-	sysSlice := chat.Message{Role: "system", Content: systemstr}
-	msgChain = append([]chat.Message{sysSlice}, msgChain...)
+	if systemstr != "" {
+		sysSlice := chat.Message{Role: "system", Content: systemstr}
+		msgChain = append([]chat.Message{sysSlice}, msgChain...)
+	}
+
+	if filter {
+		log.Print("Hi, in filter!")
+		if orgMsg.ReferencedMessage != nil {
+			log.Print("Hi, in orgMsg.ReferencedMessage != nil !")
+			filterMsg, err := session.State.Message(orgMsg.ChannelID, orgMsg.ReferencedMessage.ID)
+			if err != nil {
+				filterMsg, err = session.ChannelMessage(orgMsg.ChannelID, orgMsg.ReferencedMessage.ID)
+				if err != nil {
+					log.Panic("Failed to get channel message: ", err)
+				}
+				err = session.State.MessageAdd(filterMsg)
+				if err != nil {
+					log.Panic("Failed to add message into state: ", err)
+				}
+			}
+
+			if !filterMsg.Author.Bot {
+				msgChain = []chat.Message{{Role: "user", Content: filterMsg.Content + "\n\n以上の文章をポジティブな言葉で言い換えてください。"}}
+				topnum, tmpnum, model = 1, 1, "gpt-3.5-turbo"
+			}
+		} else {
+			content, _, _, _, _, _, _ := splitMsg(msg, guild)
+			msgChain = []chat.Message{{Role: "user", Content: content + "\n\n以上の文章をポジティブな言葉で言い換えてください。"}}
+			topnum, tmpnum, model = 1, 1, "gpt-3.5-turbo"
+		}
+	}
 
 	start := time.Now()
+
+	log.Print(msgChain)
 
 	response, err := chat.GptRequest(&msgChain, data, guild, topnum, tmpnum, model)
 	if err != nil {
@@ -148,15 +177,15 @@ func reverse(s interface{}) {
 	}
 }
 
-func splitMsg(msg *string, guild *config.Guild) (string, int, float64, float64, string, string) {
+func splitMsg(msg *string, guild *config.Guild) (string, int, float64, float64, string, string, bool) {
 	var content, systemstr, modelstr string
 	var repnum int
 	var tmpnum, topnum float64
+	var filter bool
 
 	modelstr = guild.Model
-	repnum = 1
-	topnum = 1
-	tmpnum = 1
+	repnum, topnum, tmpnum = 1, 1, 1
+	filter = false
 
 	str := strings.Split(*msg, " ")
 	for i, word := range str {
@@ -179,6 +208,8 @@ func splitMsg(msg *string, guild *config.Guild) (string, int, float64, float64, 
 			systemstr = str[i+1]
 		} else if word == "-m" && i+1 < len(str) {
 			modelstr = str[i+1]
+		} else if word == "-f" {
+			filter = true
 		} else if !strings.HasPrefix(word, "-") {
 			if i == 0 {
 				content += word
@@ -187,5 +218,5 @@ func splitMsg(msg *string, guild *config.Guild) (string, int, float64, float64, 
 			}
 		}
 	}
-	return content, repnum, tmpnum, topnum, systemstr, modelstr
+	return content, repnum, tmpnum, topnum, systemstr, modelstr, filter
 }

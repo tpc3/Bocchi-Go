@@ -69,7 +69,7 @@ func init() {
 	}
 }
 
-func SaveData(data *Tokens, guild *Guild, tokens int) error {
+func SaveData(data *Tokens, model *string, tokens *int) error {
 	file, err := os.ReadFile(dataFile)
 	if err != nil {
 		return err
@@ -80,13 +80,13 @@ func SaveData(data *Tokens, guild *Guild, tokens int) error {
 		return err
 	}
 
-	switch guild.Model {
+	switch *model {
 	case "gpt-3.5-turbo":
-		CurrentData.Tokens.Gpt_35_turbo += tokens
+		CurrentData.Tokens.Gpt_35_turbo += *tokens
 	case "gpt-4":
-		CurrentData.Tokens.Gpt_4 += tokens
+		CurrentData.Tokens.Gpt_4 += *tokens
 	case "gpt-4-32k":
-		CurrentData.Tokens.Gpt_4_32k += tokens
+		CurrentData.Tokens.Gpt_4_32k += *tokens
 	}
 
 	newData := Data{

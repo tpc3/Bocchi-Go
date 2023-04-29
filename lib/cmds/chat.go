@@ -50,7 +50,7 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 		for i := 0; i < repnum; i++ {
 			if loopTargetMsg.Author.ID != session.State.User.ID {
 				break
-			} else if loopTargetMsg.Embeds[0].Color != embed.ColorGPT { //ToDo: Better handling
+			} else if loopTargetMsg.Embeds[0].Color != embed.ColorGPT3 && loopTargetMsg.Embeds[0].Color != embed.ColorGPT4 { //ToDo: Better handling
 				break
 			}
 			msgChain = append(msgChain, chat.Message{Role: "assistant", Content: loopTargetMsg.Embeds[0].Description})
@@ -162,7 +162,7 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 		Text: exectimetext + dulation + second,
 	}
 	session.MessageReactionRemove(orgMsg.ChannelID, orgMsg.ID, "🤔", session.State.User.ID)
-	GPTReplyEmbed(session, orgMsg, embedMsg)
+	GPTReplyEmbed(session, orgMsg, embedMsg, &model)
 }
 
 // https://stackoverflow.com/questions/28058278/how-do-i-reverse-a-slice-in-go

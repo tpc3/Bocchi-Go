@@ -7,7 +7,8 @@ import (
 )
 
 const (
-	ColorGPT  = 0x10a37f
+	ColorGPT3 = 0x10a37f
+	ColorGPT4 = 0x007bff
 	ColorPink = 0xf50057
 )
 

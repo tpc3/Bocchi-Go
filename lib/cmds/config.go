@@ -122,7 +122,7 @@ func ConfigCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guil
 	session.MessageReactionAdd(orgMsg.ChannelID, orgMsg.ID, "👍")
 	msg := embed.NewEmbed(session, orgMsg)
 	msg.Title = config.Lang[guild.Lang].Config.Title
-	msg.Color = embed.ColorGPT
+	msg.Color = embed.ColorGPT3
 	msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{
 		Value: key + item + config.Lang[guild.Lang].Config.Announce,
 	})

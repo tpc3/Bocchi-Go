@@ -209,9 +209,9 @@ func splitMsg(msg *string, guild *config.Guild) (string, int, float64, float64, 
 			filter = true
 		} else if !strings.HasPrefix(word, "-") {
 			if i == 0 {
-				content += word
+				content += word + " "
 			} else if !strings.HasPrefix(str[i-1], "-") {
-				content += word
+				content += word + " "
 			}
 		}
 	}

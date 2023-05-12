@@ -7,9 +7,10 @@ import (
 )
 
 const (
-	ColorGPT3 = 0x10a37f
-	ColorGPT4 = 0x007bff
-	ColorPink = 0xf50057
+	ColorGPT3   = 0x10a37f
+	ColorGPT4   = 0x007bff
+	ColorPink   = 0xf50057
+	ColorSystem = 0xffc107
 )
 
 var UnknownErrorNum int

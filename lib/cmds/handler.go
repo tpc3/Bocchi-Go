@@ -13,6 +13,9 @@ import (
 func ReplyEmbed(session *discordgo.Session, orgMsg *discordgo.MessageCreate, msgembed *discordgo.MessageEmbed) {
 	reply := discordgo.MessageSend{}
 	reply.Embed = msgembed
+	if reply.Embed.Color == 0 {
+		reply.Embed.Color = embed.ColorSystem
+	}
 	reply.Reference = orgMsg.Reference()
 	reply.AllowedMentions = &discordgo.MessageAllowedMentions{
 		RepliedUser: false,

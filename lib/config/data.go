@@ -18,9 +18,14 @@ type Data struct {
 }
 
 type Tokens struct {
-	Gpt_35_turbo int
+	Gpt_35_turbo Gpt_35_turbo
 	Gpt_4        int
 	Gpt_4_32k    int
+}
+
+type Gpt_35_turbo struct {
+	Prompt     int
+	Completion int
 }
 
 const dataFile = "./data.yml"
@@ -32,7 +37,6 @@ var (
 )
 
 func init() {
-	RunCron()
 	GetRate()
 
 	file, err := os.ReadFile(dataFile)
@@ -41,8 +45,13 @@ func init() {
 			log.Fatal("Data load failed: ", err)
 		}
 
+		initGpt_35_turbo := Gpt_35_turbo{
+			Prompt:     0,
+			Completion: 0,
+		}
+
 		initTokens := Tokens{
-			Gpt_35_turbo: 0,
+			Gpt_35_turbo: initGpt_35_turbo,
 			Gpt_4:        0,
 			Gpt_4_32k:    0,
 		}
@@ -69,7 +78,7 @@ func init() {
 	}
 }
 
-func SaveData(data *Tokens, model *string, tokens *int) error {
+func SaveData(data *Tokens, model *string, promptTokens *int, completionTokens *int, totalTokens *int) error {
 	file, err := os.ReadFile(dataFile)
 	if err != nil {
 		return err
@@ -82,11 +91,12 @@ func SaveData(data *Tokens, model *string, tokens *int) error {
 
 	switch *model {
 	case "gpt-3.5-turbo":
-		CurrentData.Tokens.Gpt_35_turbo += *tokens
+		CurrentData.Tokens.Gpt_35_turbo.Prompt += *promptTokens
+		CurrentData.Tokens.Gpt_35_turbo.Completion += *completionTokens
 	case "gpt-4":
-		CurrentData.Tokens.Gpt_4 += *tokens
+		CurrentData.Tokens.Gpt_4 += *totalTokens
 	case "gpt-4-32k":
-		CurrentData.Tokens.Gpt_4_32k += *tokens
+		CurrentData.Tokens.Gpt_4_32k += *totalTokens
 	}
 
 	newData := Data{
@@ -115,7 +125,7 @@ func RunCron() {
 }
 
 func ResetTokens() error {
-	CurrentData.Tokens.Gpt_35_turbo, CurrentData.Tokens.Gpt_4, CurrentData.Tokens.Gpt_4_32k = 0, 0, 0
+	CurrentData.Tokens.Gpt_35_turbo.Prompt, CurrentData.Tokens.Gpt_35_turbo.Completion, CurrentData.Tokens.Gpt_4, CurrentData.Tokens.Gpt_4_32k = 0, 0, 0, 0
 
 	newData := Data{
 		Tokens: CurrentData.Tokens,

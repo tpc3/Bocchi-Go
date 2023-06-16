@@ -25,7 +25,8 @@ func CostCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 func calculationTokens(guild *config.Guild) string {
 
 	var rate float64
-	Tokens_gpt_35_turbo := float64(config.CurrentData.Tokens.Gpt_35_turbo)
+	Tokens_gpt_35_turbo_prompt := float64(config.CurrentData.Tokens.Gpt_35_turbo.Prompt)
+	Tokens_gpt_35_turbo_completion := float64(config.CurrentData.Tokens.Gpt_35_turbo.Completion)
 	Tokens_gpt_4 := float64(config.CurrentData.Tokens.Gpt_4)
 	Tokens_gpt_4_32k := float64(config.CurrentData.Tokens.Gpt_4_32k)
 
@@ -35,10 +36,10 @@ func calculationTokens(guild *config.Guild) string {
 		rate = 1
 	}
 
-	cost_gpt_35 := (Tokens_gpt_35_turbo / 1000) * 0.0002 * rate
+	cost_gpt_35 := ((Tokens_gpt_35_turbo_prompt / 1000) * 0.0015 * rate) + ((Tokens_gpt_35_turbo_completion / 1000) * 0.0002 * rate)
 	cost_gpt_4 := (Tokens_gpt_4 / 1000) * 0.003 * rate
 	cost_gpt_4_32k := (Tokens_gpt_4_32k / 1000) * 0.006 * rate
-	cost := cost_gpt_35 + cost_gpt_4 + cost_gpt_4_32k
+	cost := (cost_gpt_35 + cost_gpt_4 + cost_gpt_4_32k) * 10
 	coststr := strconv.FormatFloat(cost, 'f', 2, 64)
 	if coststr == "0.00" {
 		coststr = "0"

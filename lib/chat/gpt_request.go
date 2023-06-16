@@ -88,9 +88,11 @@ func getOpenAIResponse(apikey *string, messages *[]Message, data *config.Tokens,
 		log.Fatal("Unmarshaling json error: ", err)
 	}
 	result := response.Choices[0].Messages.Content
-	tokens := response.Usages.TotalTokens
+	promptTokens := response.Usages.PromptTokens
+	completionTokens := response.Usages.CompletionTokens
+	totalTokens := response.Usages.TotalTokens
 
-	err = config.SaveData(data, &model, &tokens)
+	err = config.SaveData(data, &model, &promptTokens, &completionTokens, &totalTokens)
 	if err != nil {
 		log.Fatal("Data save failed: ", err)
 	}

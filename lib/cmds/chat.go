@@ -34,76 +34,6 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 
 	msgChain := []chat.Message{{Role: "user", Content: content}}
 
-	if orgMsg.ReferencedMessage != nil {
-		loopTargetMsg, err := session.State.Message(orgMsg.ChannelID, orgMsg.ReferencedMessage.ID)
-		if err != nil {
-			loopTargetMsg, err = session.ChannelMessage(orgMsg.ChannelID, orgMsg.ReferencedMessage.ID)
-			if err != nil {
-				log.Panic("Failed to get channel message: ", err)
-			}
-			err = session.State.MessageAdd(loopTargetMsg)
-			if err != nil {
-				log.Panic("Failed to add message into state: ", err)
-			}
-		}
-		// Get reply msgs recursively
-		for i := 0; i < repnum; i++ {
-			if loopTargetMsg.Author.ID != session.State.User.ID {
-				break
-			} else if loopTargetMsg.Embeds[0].Color != embed.ColorGPT3 && loopTargetMsg.Embeds[0].Color != embed.ColorGPT4 { //ToDo: Better handling
-				break
-			}
-			msgChain = append(msgChain, chat.Message{Role: "assistant", Content: loopTargetMsg.Embeds[0].Description})
-
-			if loopTargetMsg.ReferencedMessage == nil {
-				break
-			}
-
-			PrevState := loopTargetMsg
-			loopTargetMsg, err = session.State.Message(orgMsg.ChannelID, loopTargetMsg.ReferencedMessage.ID)
-			if err != nil {
-				loopTargetMsg, err = session.ChannelMessage(orgMsg.ChannelID, PrevState.ReferencedMessage.ID)
-				if err != nil {
-					log.Panic("Failed to get channel message: ", err)
-				}
-				err = session.State.MessageAdd(loopTargetMsg)
-				if err != nil {
-					log.Panic("Failed to add message into state: ", err)
-				}
-			}
-
-			if loopTargetMsg.Content == "" {
-				break
-			}
-			_, trimmed := utils.TrimPrefix(loopTargetMsg.Content, config.CurrentConfig.Guild.Prefix+Chat+" ", session.State.User.Mention())
-			content, _, tmpnum, topnum, systemstr, model, filter = splitMsg(&trimmed, guild)
-			msgChain = append(msgChain, chat.Message{Role: "user", Content: content})
-			if loopTargetMsg.ReferencedMessage == nil {
-				break
-			}
-
-			PrevState = loopTargetMsg
-			loopTargetMsg, err = session.State.Message(orgMsg.ChannelID, loopTargetMsg.ReferencedMessage.ID)
-			if err != nil {
-				loopTargetMsg, err = session.ChannelMessage(orgMsg.ChannelID, PrevState.ReferencedMessage.ID)
-				if err != nil {
-					log.Panic("Failed to get channel message: ", err)
-				}
-				err = session.State.MessageAdd(loopTargetMsg)
-				if err != nil {
-					log.Panic("Failed to add message into state: ", err)
-				}
-			}
-		}
-
-		reverse(msgChain)
-	}
-
-	if systemstr != "" {
-		sysSlice := chat.Message{Role: "system", Content: systemstr}
-		msgChain = append([]chat.Message{sysSlice}, msgChain...)
-	}
-
 	if filter {
 		if orgMsg.ReferencedMessage != nil {
 			filterMsg, err := session.State.Message(orgMsg.ChannelID, orgMsg.ReferencedMessage.ID)
@@ -123,9 +53,79 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 				topnum, tmpnum, model = 1, 1, "gpt-3.5-turbo"
 			}
 		} else {
-			content, _, _, _, _, _, _ := splitMsg(msg, guild)
 			msgChain = []chat.Message{{Role: "user", Content: content + "\n\n以上の文章をポジティブな言葉で言い換えてください。"}}
 			topnum, tmpnum, model = 1, 1, "gpt-3.5-turbo"
+		}
+	} else {
+
+		if orgMsg.ReferencedMessage != nil {
+			loopTargetMsg, err := session.State.Message(orgMsg.ChannelID, orgMsg.ReferencedMessage.ID)
+			if err != nil {
+				loopTargetMsg, err = session.ChannelMessage(orgMsg.ChannelID, orgMsg.ReferencedMessage.ID)
+				if err != nil {
+					log.Panic("Failed to get channel message: ", err)
+				}
+				err = session.State.MessageAdd(loopTargetMsg)
+				if err != nil {
+					log.Panic("Failed to add message into state: ", err)
+				}
+			}
+			// Get reply msgs recursively
+			for i := 0; i < repnum; i++ {
+				if loopTargetMsg.Author.ID != session.State.User.ID {
+					break
+				} else if loopTargetMsg.Embeds[0].Color != embed.ColorGPT3 && loopTargetMsg.Embeds[0].Color != embed.ColorGPT4 { //ToDo: Better handling
+					break
+				}
+				msgChain = append(msgChain, chat.Message{Role: "assistant", Content: loopTargetMsg.Embeds[0].Description})
+
+				if loopTargetMsg.ReferencedMessage == nil {
+					break
+				}
+
+				PrevState := loopTargetMsg
+				loopTargetMsg, err = session.State.Message(orgMsg.ChannelID, loopTargetMsg.ReferencedMessage.ID)
+				if err != nil {
+					loopTargetMsg, err = session.ChannelMessage(orgMsg.ChannelID, PrevState.ReferencedMessage.ID)
+					if err != nil {
+						log.Panic("Failed to get channel message: ", err)
+					}
+					err = session.State.MessageAdd(loopTargetMsg)
+					if err != nil {
+						log.Panic("Failed to add message into state: ", err)
+					}
+				}
+
+				if loopTargetMsg.Content == "" {
+					break
+				}
+				_, trimmed := utils.TrimPrefix(loopTargetMsg.Content, config.CurrentConfig.Guild.Prefix+Chat+" ", session.State.User.Mention())
+				content, _, tmpnum, topnum, systemstr, model, filter = splitMsg(&trimmed, guild)
+				msgChain = append(msgChain, chat.Message{Role: "user", Content: content})
+				if loopTargetMsg.ReferencedMessage == nil {
+					break
+				}
+
+				PrevState = loopTargetMsg
+				loopTargetMsg, err = session.State.Message(orgMsg.ChannelID, loopTargetMsg.ReferencedMessage.ID)
+				if err != nil {
+					loopTargetMsg, err = session.ChannelMessage(orgMsg.ChannelID, PrevState.ReferencedMessage.ID)
+					if err != nil {
+						log.Panic("Failed to get channel message: ", err)
+					}
+					err = session.State.MessageAdd(loopTargetMsg)
+					if err != nil {
+						log.Panic("Failed to add message into state: ", err)
+					}
+				}
+			}
+
+			reverse(msgChain)
+		}
+
+		if systemstr != "" {
+			sysSlice := chat.Message{Role: "system", Content: systemstr}
+			msgChain = append([]chat.Message{sysSlice}, msgChain...)
 		}
 	}
 
@@ -208,7 +208,9 @@ func splitMsg(msg *string, guild *config.Guild) (string, int, float64, float64, 
 		} else if word == "-f" {
 			filter = true
 		} else if !strings.HasPrefix(word, "-") {
-			if i == 0 {
+			if filter {
+				content += word
+			} else if i == 0 {
 				content += word + " "
 			} else if !strings.HasPrefix(str[i-1], "-") {
 				content += word + " "

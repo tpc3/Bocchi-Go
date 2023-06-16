@@ -79,6 +79,12 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 				}
 				msgChain = append(msgChain, chat.Message{Role: "assistant", Content: loopTargetMsg.Embeds[0].Description})
 
+				if i == 0 && loopTargetMsg.Embeds[0].Color == embed.ColorGPT3 {
+					model = "gpt-3.5-turbo"
+				} else if i == 0 && loopTargetMsg.Embeds[0].Color == embed.ColorGPT4 {
+					model = "gpt-4"
+				}
+
 				if loopTargetMsg.ReferencedMessage == nil {
 					break
 				}
@@ -100,8 +106,8 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 					break
 				}
 				_, trimmed := utils.TrimPrefix(loopTargetMsg.Content, config.CurrentConfig.Guild.Prefix+Chat+" ", session.State.User.Mention())
-				content, _, tmpnum, topnum, systemstr, model, filter = splitMsg(&trimmed, guild)
-				msgChain = append(msgChain, chat.Message{Role: "user", Content: content})
+				contentlog, _, _, _, systemstrlog, _, _ := splitMsg(&trimmed, guild)
+				msgChain = append(msgChain, chat.Message{Role: "user", Content: contentlog})
 				if loopTargetMsg.ReferencedMessage == nil {
 					break
 				}
@@ -118,14 +124,19 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 						log.Panic("Failed to add message into state: ", err)
 					}
 				}
+
+				if systemstr != "" || systemstrlog != "" {
+					if systemstrlog != "" {
+						sysSlice := chat.Message{Role: "system", Content: systemstrlog}
+						msgChain = append([]chat.Message{sysSlice}, msgChain...)
+					} else {
+						sysSlice := chat.Message{Role: "system", Content: systemstr}
+						msgChain = append([]chat.Message{sysSlice}, msgChain...)
+					}
+				}
 			}
 
 			reverse(msgChain)
-		}
-
-		if systemstr != "" {
-			sysSlice := chat.Message{Role: "system", Content: systemstr}
-			msgChain = append([]chat.Message{sysSlice}, msgChain...)
 		}
 	}
 

@@ -22,5 +22,6 @@ jobs:
         id: docker_build
         uses: docker/build-push-action@v3
         with:
+          platforms: linux/amd64,linux/arm64,linux/arm/v6,linux/arm/v7
           push: true
           tags: ghcr.io/tpc3/bocchi-go:latest

@@ -189,43 +189,33 @@ func splitMsg(msg *string, guild *config.Guild) (string, int, float64, float64, 
 	var content, systemstr, modelstr string
 	var repnum int
 	var tmpnum, topnum float64
-	var filter bool
+	var prm, filter bool
 
 	modelstr = guild.Model
 	repnum, topnum, tmpnum = 1, 1, 1
-	filter = false
+	prm, filter = true, false
 
 	str := strings.Split(*msg, " ")
-	for i, word := range str {
-		if word == "-l" && i+1 < len(str) {
-			value, err := strconv.Atoi(str[i+1])
-			if err == nil && value > 1 {
-				repnum = value
+	leng := len(str)
+
+	for i := 0; i < leng; i++ {
+		if strings.HasPrefix(str[i], "-") && prm && !filter {
+			if str[i] == "-f" {
+				filter = true
+			} else if str[i] == "-m" {
+				modelstr = str[i+1]
+			} else if str[i] == "-l" {
+				repnum, _ = strconv.Atoi(str[i+1])
+			} else if str[i] == "-p" {
+				topnum, _ = strconv.ParseFloat(str[i+1], 64)
+			} else if str[i] == "-t" {
+				tmpnum, _ = strconv.ParseFloat(str[i+1], 64)
+			} else if str[i] == "-s" {
+				systemstr = str[i+1]
 			}
-		} else if word == "-p" && i+1 < len(str) {
-			value, err := strconv.ParseFloat(str[i+1], 64)
-			if err == nil && 0 <= value && value <= 1 {
-				topnum = value
-			}
-		} else if word == "-t" && i+1 < len(str) {
-			value, err := strconv.ParseFloat(str[i+1], 64)
-			if err == nil && 0 <= value && value <= 2 {
-				tmpnum = value
-			}
-		} else if word == "-s" && i+1 < len(str) {
-			systemstr = str[i+1]
-		} else if word == "-m" && i+1 < len(str) {
-			modelstr = str[i+1]
-		} else if word == "-f" {
-			filter = true
-		} else if !strings.HasPrefix(word, "-") {
-			if filter {
-				content += word
-			} else if i == 0 {
-				content += word + " "
-			} else if !strings.HasPrefix(str[i-1], "-") {
-				content += word + " "
-			}
+		} else {
+			prm = false
+			content += str[i] + " "
 		}
 	}
 	return content, repnum, tmpnum, topnum, systemstr, modelstr, filter

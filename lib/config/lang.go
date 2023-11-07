@@ -22,6 +22,7 @@ type errorstr struct {
 	MustTimeoutDuration string
 	LongResponse        string
 	TimeOut             string
+	CantReply           string
 }
 
 type usagestr struct {
@@ -131,6 +132,7 @@ func loadLang() {
 			MustTimeoutDuration: "その引数は1以上の自然数である必要があります。",
 			LongResponse:        "AIの生成した文章が長すぎました。指示を変更してもう一度お試しください。",
 			TimeOut:             "要求がタイムアウトしました。もう一度お試しください。",
+			CantReply:           "エラーへの返信はできません。",
 		},
 	}
 	Lang["english"] = Strings{
@@ -186,6 +188,7 @@ func loadLang() {
 			MustTimeoutDuration: "That argument must be a natural number greater than or equal to 1.",
 			LongResponse:        "The AI-generated text is too long. Please modify your instructions and try again.",
 			TimeOut:             "The request has timed out. Please try again.",
+			CantReply:           "Cannot reply for error message.",
 		},
 	}
 }

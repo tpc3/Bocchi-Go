@@ -30,7 +30,11 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 		return
 	}
 
-	content, repnum, tmpnum, topnum, systemstr, model, filter := splitMsg(msg, guild)
+	content, repnum, tmpnum, topnum, systemstr, model, cmodel, filter := splitMsg(msg, guild)
+
+	if content == "" {
+		ErrorReply(session, orgMsg, config.Lang[config.CurrentConfig.Guild.Lang].Error.SubCmd)
+	}
 
 	msgChain := []chat.Message{{Role: "user", Content: content}}
 
@@ -79,10 +83,14 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 				}
 				msgChain = append(msgChain, chat.Message{Role: "assistant", Content: loopTargetMsg.Embeds[0].Description})
 
-				if i == 0 && loopTargetMsg.Embeds[0].Color == embed.ColorGPT3 {
-					model = "gpt-3.5-turbo"
-				} else if i == 0 && loopTargetMsg.Embeds[0].Color == embed.ColorGPT4 {
-					model = "gpt-4"
+				if i == 0 && !cmodel {
+					if loopTargetMsg.Embeds[0].Color == embed.ColorGPT3 {
+						model = "gpt-3.5-turbo"
+					} else if loopTargetMsg.Embeds[0].Color == embed.ColorGPT4 {
+						model = "gpt-4"
+					} else {
+						ErrorReply(session, orgMsg, config.Lang[config.CurrentConfig.Guild.Lang].Error.CantReply)
+					}
 				}
 
 				if loopTargetMsg.ReferencedMessage == nil {
@@ -106,7 +114,7 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 					break
 				}
 				_, trimmed := utils.TrimPrefix(loopTargetMsg.Content, config.CurrentConfig.Guild.Prefix+Chat+" ", session.State.User.Mention())
-				contentlog, _, _, _, systemstrlog, _, _ := splitMsg(&trimmed, guild)
+				contentlog, _, _, _, systemstrlog, _, _, _ := splitMsg(&trimmed, guild)
 				msgChain = append(msgChain, chat.Message{Role: "user", Content: contentlog})
 				if loopTargetMsg.ReferencedMessage == nil {
 					break
@@ -185,15 +193,15 @@ func reverse(s interface{}) {
 	}
 }
 
-func splitMsg(msg *string, guild *config.Guild) (string, int, float64, float64, string, string, bool) {
+func splitMsg(msg *string, guild *config.Guild) (string, int, float64, float64, string, string, bool, bool) {
 	var content, systemstr, modelstr string
 	var repnum int
 	var tmpnum, topnum float64
-	var prm, filter bool
+	var prm, filter, cmodel bool
 
 	modelstr = guild.Model
 	repnum, topnum, tmpnum = 1, 1, 1
-	prm, filter = true, false
+	prm, filter, cmodel = true, false, false
 
 	str := strings.Split(*msg, " ")
 	leng := len(str)
@@ -204,6 +212,7 @@ func splitMsg(msg *string, guild *config.Guild) (string, int, float64, float64, 
 				filter = true
 			} else if str[i] == "-m" {
 				modelstr = str[i+1]
+				cmodel = true
 			} else if str[i] == "-l" {
 				repnum, _ = strconv.Atoi(str[i+1])
 			} else if str[i] == "-p" {
@@ -213,10 +222,11 @@ func splitMsg(msg *string, guild *config.Guild) (string, int, float64, float64, 
 			} else if str[i] == "-s" {
 				systemstr = str[i+1]
 			}
+			i += 1
 		} else {
 			prm = false
 			content += str[i] + " "
 		}
 	}
-	return content, repnum, tmpnum, topnum, systemstr, modelstr, filter
+	return content, repnum, tmpnum, topnum, systemstr, modelstr, cmodel, filter
 }

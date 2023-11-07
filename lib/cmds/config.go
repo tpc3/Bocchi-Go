@@ -33,11 +33,15 @@ func ConfigUsage(session *discordgo.Session, orgMsg *discordgo.MessageCreate, gu
 	})
 	msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{
 		Name:  "model <model name>",
-		Value: config.Lang[guild.Lang].Usage.Config.Lang,
+		Value: config.Lang[guild.Lang].Usage.Config.Model,
 	})
 	msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{
 		Name:  "timeout <int>",
 		Value: config.Lang[guild.Lang].Usage.Config.TimeOut,
+	})
+	msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{
+		Name:  "reply <int>",
+		Value: config.Lang[guild.Lang].Usage.Config.Reply,
 	})
 	ReplyEmbed(session, orgMsg, msg)
 }
@@ -62,6 +66,10 @@ func ConfigCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guil
 		msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{
 			Name:  "timeout",
 			Value: strconv.Itoa(guild.Timeout),
+		})
+		msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{
+			Name:  "reply",
+			Value: strconv.Itoa(guild.Reply),
 		})
 		ReplyEmbed(session, orgMsg, msg)
 		return
@@ -105,6 +113,16 @@ func ConfigCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guil
 		}
 		key = config.Lang[guild.Lang].Config.Item.Timeout
 		item = timeout
+	case "reply":
+		reply := split[1]
+		guild.Reply, _ = strconv.Atoi(reply)
+		if guild.Reply < 1 {
+			ErrorReply(session, orgMsg, config.Lang[guild.Lang].Error.MustTimeoutDuration)
+			return
+		}
+		guild.Reply, _ = strconv.Atoi(reply)
+		key = config.Lang[guild.Lang].Config.Item.Reply
+		item = reply
 	default:
 		ConfigUsage(session, orgMsg, &guild, errors.New("item not found"))
 		return
@@ -122,7 +140,7 @@ func ConfigCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guil
 	session.MessageReactionAdd(orgMsg.ChannelID, orgMsg.ID, "👍")
 	msg := embed.NewEmbed(session, orgMsg)
 	msg.Title = config.Lang[guild.Lang].Config.Title
-	msg.Color = embed.ColorGPT3
+	msg.Color = embed.ColorSystem
 	msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{
 		Value: key + item + config.Lang[guild.Lang].Config.Announce,
 	})

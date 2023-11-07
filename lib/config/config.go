@@ -28,6 +28,7 @@ type Guild struct {
 	Lang    string
 	Model   string
 	Timeout int
+	Reply   int
 }
 
 const configFile = "./config.yml"
@@ -84,11 +85,12 @@ func SaveGuild(guild *Guild) error {
 		return err
 	}
 
-	if guild.Prefix != CurrentConfig.Guild.Prefix || guild.Model != CurrentConfig.Guild.Model || guild.Lang != CurrentConfig.Guild.Lang || guild.Timeout != CurrentConfig.Guild.Timeout {
+	if guild.Prefix != CurrentConfig.Guild.Prefix || guild.Model != CurrentConfig.Guild.Model || guild.Lang != CurrentConfig.Guild.Lang || guild.Timeout != CurrentConfig.Guild.Timeout || guild.Reply != CurrentConfig.Guild.Reply {
 		CurrentConfig.Guild.Prefix = guild.Prefix
 		CurrentConfig.Guild.Lang = guild.Lang
 		CurrentConfig.Guild.Model = guild.Model
 		CurrentConfig.Guild.Timeout = guild.Timeout
+		CurrentConfig.Guild.Reply = guild.Reply
 	}
 
 	newConfig := Config{

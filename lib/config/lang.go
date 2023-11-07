@@ -1,5 +1,7 @@
 package config
 
+import "strconv"
+
 type Strings struct {
 	Lang     string
 	CurrConf string
@@ -43,6 +45,7 @@ type itemstr struct {
 	Model    string
 	Maxtoken string
 	Timeout  string
+	Reply    string
 }
 
 type replystr struct {
@@ -70,7 +73,9 @@ type configusagestr struct {
 	Desc    string
 	Prefix  string
 	Lang    string
+	Model   string
 	TimeOut string
+	Reply   string
 }
 
 var (
@@ -85,9 +90,12 @@ func loadLang() {
 		Usage: usagestr{
 			Title: "使い方: ",
 			Config: configusagestr{
-				Desc:   "各種設定を行います。\n設定項目と内容は以下をご確認ください。",
-				Prefix: "コマンドの接頭詞を指定します。\n現在の設定は`" + CurrentConfig.Guild.Prefix + "`です。",
-				Lang:   "言語を指定します。現在の設定は`" + CurrentConfig.Guild.Lang + "`です。",
+				Desc:    "各種設定を行います。\n設定項目と内容は以下をご確認ください。",
+				Prefix:  "コマンドの接頭詞を指定します。\n現在の設定は`" + CurrentConfig.Guild.Prefix + "`です。",
+				Lang:    "言語を指定します。\n現在の設定は`" + CurrentConfig.Guild.Lang + "`です。",
+				Model:   "モデルを指定します。\n現在の設定は`" + CurrentConfig.Guild.Model + "`です。",
+				TimeOut: "タイムアウトまでの時間を指定します。\n現在の設定は、｀" + strconv.Itoa(CurrentConfig.Guild.Timeout) + "`です。",
+				Reply:   "返信を遡る回数を指定します。\n現在の設定は、｀" + strconv.Itoa(CurrentConfig.Guild.Reply) + "`です。",
 			},
 			Cmd: cmdusagestr{
 				ChatTitle:   "`" + CurrentConfig.Guild.Prefix + "chat`",
@@ -113,6 +121,7 @@ func loadLang() {
 				Model:    "APIで使用するモデルを\"",
 				Maxtoken: "botが使用するトークンの最大値を\"",
 				Timeout:  "タイムアウトの時間を\"",
+				Reply:    "返信を遡る回数を\"",
 			},
 		},
 		Reply: replystr{
@@ -141,9 +150,12 @@ func loadLang() {
 		Usage: usagestr{
 			Title: "Usage: ",
 			Config: configusagestr{
-				Desc:   "Do configuration.\nItem list is below.",
-				Prefix: "Specify command prefix.\nCurrent config is `" + CurrentConfig.Guild.Prefix + "`.",
-				Lang:   "Specify language.\nCurrent config is `" + CurrentConfig.Guild.Lang + "`.",
+				Desc:    "Do configuration.\nItem list is below.",
+				Prefix:  "Specify command prefix.\nCurrent config is `" + CurrentConfig.Guild.Prefix + "`.",
+				Lang:    "Specify language.\nCurrent config is `" + CurrentConfig.Guild.Lang + "`.",
+				Model:   "S@ecify model.\nCurrent config is `" + CurrentConfig.Guild.Model + "`.",
+				TimeOut: "Specify timeout.\nCurrent config is `" + strconv.Itoa(CurrentConfig.Guild.Timeout) + "`.",
+				Reply:   "Specify number of times to go back to reply.\nCurrent config is `" + strconv.Itoa(CurrentConfig.Guild.Reply) + "`.",
 			},
 			Cmd: cmdusagestr{
 				ChatTitle:   "`" + CurrentConfig.Guild.Prefix + "chat`",
@@ -169,6 +181,7 @@ func loadLang() {
 				Maxtoken: "Max Tokens used by bot for \"",
 				Model:    "Model used by API for\"",
 				Timeout:  "The time until timeout for \"",
+				Reply:    "Number of times to go back to reply\"",
 			},
 		},
 		Reply: replystr{

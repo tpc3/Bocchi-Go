@@ -9,5 +9,6 @@ guild:
   lang: japanese
   model: gpt-3.5-turbo
   timeout: 120
+  reply: 3
 user_blacklist:
 - "0000000000000000000"

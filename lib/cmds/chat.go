@@ -200,7 +200,7 @@ func splitMsg(msg *string, guild *config.Guild) (string, int, float64, float64, 
 	var prm, filter, cmodel bool
 
 	modelstr = guild.Model
-	repnum, topnum, tmpnum = 1, 1, 1
+	repnum, topnum, tmpnum = config.CurrentConfig.Guild.Reply, 1, 1
 	prm, filter, cmodel = true, false, false
 
 	str := strings.Split(*msg, " ")

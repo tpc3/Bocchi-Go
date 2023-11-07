@@ -6,7 +6,6 @@ import (
 	"errors"
 	"io"
 	"log"
-	"net"
 	"net/http"
 	"net/url"
 	"time"
@@ -46,15 +45,6 @@ func getOpenAIResponse(apikey *string, messages *[]Message, data *config.Tokens,
 	req.Header.Set("Authorization", "Bearer "+*apikey)
 
 	client := &http.Client{
-		Transport: &http.Transport{
-			DialContext: (&net.Dialer{
-				Timeout:   time.Duration(config.CurrentConfig.Guild.Timeout) * time.Second,
-				KeepAlive: time.Duration(config.CurrentConfig.Guild.Timeout) * time.Second,
-			}).DialContext,
-			TLSHandshakeTimeout:   time.Duration(config.CurrentConfig.Guild.Timeout) * time.Second,
-			ResponseHeaderTimeout: time.Duration(config.CurrentConfig.Guild.Timeout) * time.Second,
-			ExpectContinueTimeout: time.Duration(config.CurrentConfig.Guild.Timeout) * time.Second,
-		},
 		Timeout: time.Duration(config.CurrentConfig.Guild.Timeout) * time.Second,
 	}
 	resp, err := client.Do(req)

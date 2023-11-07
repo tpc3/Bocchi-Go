@@ -27,7 +27,7 @@ func ReplyEmbed(session *discordgo.Session, orgMsg *discordgo.MessageCreate, msg
 }
 
 func GPTReplyEmbed(session *discordgo.Session, orgMsg *discordgo.MessageCreate, msgembed *discordgo.MessageEmbed, model *string) {
-	if *model == "gpt-4" {
+	if strings.Contains(*model, "gpt-4") {
 		msgembed.Color = embed.ColorGPT4
 	} else {
 		msgembed.Color = embed.ColorGPT3

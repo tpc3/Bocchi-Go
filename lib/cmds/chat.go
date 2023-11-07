@@ -62,6 +62,8 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 		}
 	} else {
 
+		var slog []string
+
 		if orgMsg.ReferencedMessage != nil {
 			loopTargetMsg, err := session.State.Message(orgMsg.ChannelID, orgMsg.ReferencedMessage.ID)
 			if err != nil {
@@ -115,6 +117,9 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 				}
 				_, trimmed := utils.TrimPrefix(loopTargetMsg.Content, config.CurrentConfig.Guild.Prefix+Chat+" ", session.State.User.Mention())
 				contentlog, _, _, _, systemstrlog, _, _, _ := splitMsg(&trimmed, guild)
+				if systemstrlog != "" {
+					slog = append(slog, systemstrlog)
+				}
 				msgChain = append(msgChain, chat.Message{Role: "user", Content: contentlog})
 				if loopTargetMsg.ReferencedMessage == nil {
 					break
@@ -132,20 +137,28 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 						log.Panic("Failed to add message into state: ", err)
 					}
 				}
+			}
 
-				if systemstr != "" || systemstrlog != "" {
-					if systemstrlog != "" {
-						sysSlice := chat.Message{Role: "system", Content: systemstrlog}
-						msgChain = append([]chat.Message{sysSlice}, msgChain...)
-					} else {
-						sysSlice := chat.Message{Role: "system", Content: systemstr}
-						msgChain = append([]chat.Message{sysSlice}, msgChain...)
-					}
+			if systemstr == "" {
+				if len(slog) != 0 {
+					sysSlice := chat.Message{Role: "system", Content: slog[0]}
+					msgChain = append([]chat.Message{sysSlice}, msgChain...)
 				}
+			} else {
+				sysSlice := chat.Message{Role: "system", Content: systemstr}
+				msgChain = append([]chat.Message{sysSlice}, msgChain...)
 			}
 
 			reverse(msgChain)
+		} else {
+
+			if systemstr != "" {
+				sysSlice := chat.Message{Role: "system", Content: systemstr}
+				msgChain = append([]chat.Message{sysSlice}, msgChain...)
+			}
+
 		}
+
 	}
 
 	start := time.Now()

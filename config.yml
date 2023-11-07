@@ -1,7 +1,7 @@
 debug: true
 discord:
   token: YOUR_TOKEN_HERE
-  status: ChatGPT is running! | b.help
+  status: Bocchi-Go is running! | b.help
 chat:
   chattoken: YOUR_TOKEN_HERE
 guild:

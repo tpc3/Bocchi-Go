@@ -18,14 +18,43 @@ type Data struct {
 }
 
 type Tokens struct {
-	Gpt_35_turbo Gpt_35_turbo
-	Gpt_4        int
-	Gpt_4_32k    int
+	Gpt_35_turbo_1106     Gpt_35_turbo_1106
+	Gpt_35_turbo_instruct Gpt_35_turbo_instruct
+	Gpt_4                 Gpt_4
+	Gpt_4_32k             Gpt_4_32k
+	Gpt_4_1106_preview    Gpt_4_1106_preview
+	Gpt_4_vision_preview  Gpt_4_vision_preview
 }
 
-type Gpt_35_turbo struct {
+type Gpt_35_turbo_1106 struct {
 	Prompt     int
 	Completion int
+}
+
+type Gpt_35_turbo_instruct struct {
+	Prompt     int
+	Completion int
+}
+
+type Gpt_4 struct {
+	Prompt     int
+	Completion int
+}
+
+type Gpt_4_32k struct {
+	Prompt     int
+	Completion int
+}
+
+type Gpt_4_1106_preview struct {
+	Prompt     int
+	Completion int
+}
+
+type Gpt_4_vision_preview struct {
+	Prompt     int
+	Completion int
+	Detail     int
 }
 
 const dataFile = "./data.yml"
@@ -45,15 +74,44 @@ func init() {
 			log.Fatal("Data load failed: ", err)
 		}
 
-		initGpt_35_turbo := Gpt_35_turbo{
+		initGpt_35_turbo_1106 := Gpt_35_turbo_1106{
 			Prompt:     0,
 			Completion: 0,
 		}
 
+		initGpt_35_turbo_instruct := Gpt_35_turbo_instruct{
+			Prompt:     0,
+			Completion: 0,
+		}
+
+		initGpt_4 := Gpt_4{
+			Prompt:     0,
+			Completion: 0,
+		}
+
+		initGpt_4_32k := Gpt_4_32k{
+			Prompt:     0,
+			Completion: 0,
+		}
+
+		initGpt_4_1106_preview := Gpt_4_1106_preview{
+			Prompt:     0,
+			Completion: 0,
+		}
+
+		initGpt_4_vision_preview := Gpt_4_vision_preview{
+			Prompt:     0,
+			Completion: 0,
+			Detail:     0,
+		}
+
 		initTokens := Tokens{
-			Gpt_35_turbo: initGpt_35_turbo,
-			Gpt_4:        0,
-			Gpt_4_32k:    0,
+			Gpt_35_turbo_1106:     initGpt_35_turbo_1106,
+			Gpt_35_turbo_instruct: initGpt_35_turbo_instruct,
+			Gpt_4:                 initGpt_4,
+			Gpt_4_32k:             initGpt_4_32k,
+			Gpt_4_1106_preview:    initGpt_4_1106_preview,
+			Gpt_4_vision_preview:  initGpt_4_vision_preview,
 		}
 
 		CurrentData = Data{
@@ -78,7 +136,7 @@ func init() {
 	}
 }
 
-func SaveData(data *Tokens, model *string, promptTokens *int, completionTokens *int, totalTokens *int) error {
+func SaveData(data *Tokens, model *string, promptTokens *int, completionTokens *int, totalTokens *int, detcost *int) error {
 	file, err := os.ReadFile(dataFile)
 	if err != nil {
 		return err
@@ -91,12 +149,27 @@ func SaveData(data *Tokens, model *string, promptTokens *int, completionTokens *
 
 	switch *model {
 	case "gpt-3.5-turbo":
-		CurrentData.Tokens.Gpt_35_turbo.Prompt += *promptTokens
-		CurrentData.Tokens.Gpt_35_turbo.Completion += *completionTokens
+		CurrentData.Tokens.Gpt_35_turbo_instruct.Prompt += *promptTokens
+		CurrentData.Tokens.Gpt_35_turbo_instruct.Completion += *completionTokens
+	case "gpt-3.5-turbo-instruct":
+		CurrentData.Tokens.Gpt_35_turbo_instruct.Prompt += *promptTokens
+		CurrentData.Tokens.Gpt_35_turbo_instruct.Completion += *completionTokens
+	case "gpt-3.5-turbo-1106":
+		CurrentData.Tokens.Gpt_35_turbo_1106.Prompt += *promptTokens
+		CurrentData.Tokens.Gpt_35_turbo_1106.Completion += *completionTokens
 	case "gpt-4":
-		CurrentData.Tokens.Gpt_4 += *totalTokens
+		CurrentData.Tokens.Gpt_4.Prompt += *promptTokens
+		CurrentData.Tokens.Gpt_4.Completion += *completionTokens
 	case "gpt-4-32k":
-		CurrentData.Tokens.Gpt_4_32k += *totalTokens
+		CurrentData.Tokens.Gpt_4_32k.Prompt += *promptTokens
+		CurrentData.Tokens.Gpt_4_32k.Completion += *completionTokens
+	case "gpt-4-1106-preview":
+		CurrentData.Tokens.Gpt_4_1106_preview.Prompt += *promptTokens
+		CurrentData.Tokens.Gpt_4_1106_preview.Completion += *completionTokens
+	case "gpt-4-vision-preview":
+		CurrentData.Tokens.Gpt_4_vision_preview.Prompt += *promptTokens
+		CurrentData.Tokens.Gpt_4_vision_preview.Completion += *completionTokens
+		CurrentData.Tokens.Gpt_4_vision_preview.Detail += *detcost
 	}
 
 	newData := Data{
@@ -125,7 +198,7 @@ func RunCron() {
 }
 
 func ResetTokens() error {
-	CurrentData.Tokens.Gpt_35_turbo.Prompt, CurrentData.Tokens.Gpt_35_turbo.Completion, CurrentData.Tokens.Gpt_4, CurrentData.Tokens.Gpt_4_32k = 0, 0, 0, 0
+	CurrentData.Tokens.Gpt_35_turbo_1106.Prompt, CurrentData.Tokens.Gpt_35_turbo_1106.Completion, CurrentData.Tokens.Gpt_35_turbo_instruct.Prompt, CurrentData.Tokens.Gpt_35_turbo_instruct.Completion, CurrentData.Tokens.Gpt_4.Prompt, CurrentData.Tokens.Gpt_4.Completion, CurrentData.Tokens.Gpt_4_32k.Prompt, CurrentData.Tokens.Gpt_4_32k.Completion, CurrentData.Tokens.Gpt_4_1106_preview.Prompt, CurrentData.Tokens.Gpt_4_1106_preview.Completion, CurrentData.Tokens.Gpt_4_vision_preview.Prompt, CurrentData.Tokens.Gpt_4_vision_preview.Completion, CurrentData.Tokens.Gpt_4_vision_preview.Detail = 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 
 	newData := Data{
 		Tokens: CurrentData.Tokens,

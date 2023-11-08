@@ -1,6 +1,20 @@
 tokens:
-  gpt_35_turbo:
+  gpt_35_turbo_1106:
     prompt: 0
     completion: 0
-  gpt_4: 0
-  gpt_4_32k: 0
+  gpt_35_turbo_instruct:
+    prompt: 0
+    completion: 0
+  gpt_4:
+    prompt: 0
+    completion: 0
+  gpt_4_32k:
+    prompt: 0
+    completion: 0
+  gpt_4_1106_preview:
+    prompt: 0
+    completion: 0
+  gpt_4_vision_preview:
+    prompt: 0
+    completion: 0
+    detail: 0

@@ -17,19 +17,38 @@ const openai = "https://api.openai.com/v1/chat/completions"
 
 var timeout *url.Error
 
-func GptRequest(msg *[]Message, data *config.Tokens, guild *config.Guild, topnum float64, tempnum float64, model string) (string, error) {
+func GptRequestImg(img *[]Img, data *config.Tokens, guild *config.Guild, topnum float64, tempnum float64, model string, detcost int) (string, error) {
+
 	apikey := config.CurrentConfig.Chat.ChatToken
-	response, err := getOpenAIResponse(&apikey, msg, data, guild, topnum, tempnum, model)
+
+	requestBody := OpenaiRequestImg{
+		Model:       model,
+		Messages:    *img,
+		Top_p:       topnum,
+		Temperature: tempnum,
+		MaxToken:    3000,
+	}
+
+	response, err := getOpenAIResponse(&apikey, data, model, requestBody, detcost)
 	return response, err
 }
 
-func getOpenAIResponse(apikey *string, messages *[]Message, data *config.Tokens, guild *config.Guild, topnum float64, tempnum float64, model string) (string, error) {
+func GptRequest(msg *[]Message, data *config.Tokens, guild *config.Guild, topnum float64, tempnum float64, model string, detail int) (string, error) {
+
+	apikey := config.CurrentConfig.Chat.ChatToken
+
 	requestBody := OpenaiRequest{
 		Model:       model,
-		Messages:    *messages,
+		Messages:    *msg,
 		Top_p:       topnum,
 		Temperature: tempnum,
 	}
+
+	response, err := getOpenAIResponse(&apikey, data, model, requestBody, detail)
+	return response, err
+}
+
+func getOpenAIResponse(apikey *string, data *config.Tokens, model string, requestBody interface{}, detcost int) (string, error) {
 
 	requestJSON, err := json.Marshal(requestBody)
 	if err != nil {
@@ -82,7 +101,7 @@ func getOpenAIResponse(apikey *string, messages *[]Message, data *config.Tokens,
 	completionTokens := response.Usages.CompletionTokens
 	totalTokens := response.Usages.TotalTokens
 
-	err = config.SaveData(data, &model, &promptTokens, &completionTokens, &totalTokens)
+	err = config.SaveData(data, &model, &promptTokens, &completionTokens, &totalTokens, &detcost)
 	if err != nil {
 		log.Fatal("Data save failed: ", err)
 	}

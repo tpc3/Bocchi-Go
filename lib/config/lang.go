@@ -25,6 +25,11 @@ type errorstr struct {
 	LongResponse        string
 	TimeOut             string
 	CantReply           string
+	NoDetail            string
+	NoImage             string
+	NoSupportimage      string
+	NoUrl               string
+	BrokenLink          string
 }
 
 type usagestr struct {
@@ -142,6 +147,11 @@ func loadLang() {
 			LongResponse:        "AIの生成した文章が長すぎました。指示を変更してもう一度お試しください。",
 			TimeOut:             "要求がタイムアウトしました。もう一度お試しください。",
 			CantReply:           "エラーへの返信はできません。",
+			NoDetail:            "highかlowのみ選択できます。",
+			NoImage:             "画像が入力されていません。",
+			NoSupportimage:      "その画像形式は対応していません。",
+			NoUrl:               "URLを入力してください。",
+			BrokenLink:          "画像のリンクが切れています。",
 		},
 	}
 	Lang["english"] = Strings{
@@ -202,6 +212,11 @@ func loadLang() {
 			LongResponse:        "The AI-generated text is too long. Please modify your instructions and try again.",
 			TimeOut:             "The request has timed out. Please try again.",
 			CantReply:           "Cannot reply for error message.",
+			NoDetail:            "Only high or low.",
+			NoImage:             "No image in command.",
+			NoSupportimage:      "gpt-4-vision-preview is not supported by this type of file.",
+			NoUrl:               "That is no url.",
+			BrokenLink:          "This link has broken.",
 		},
 	}
 }

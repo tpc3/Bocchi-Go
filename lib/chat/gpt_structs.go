@@ -7,6 +7,14 @@ type OpenaiRequest struct {
 	Temperature float64   `json:"temperature"`
 }
 
+type OpenaiRequestImg struct {
+	Model       string  `json:"model"`
+	Messages    []Img   `json:"messages"`
+	Top_p       float64 `json:"top_p"`
+	Temperature float64 `json:"temperature"`
+	MaxToken    int     `json:"max_tokens"`
+}
+
 type OpenaiResponse struct {
 	ID      string   `json:"id"`
 	Object  string   `json:"object"`
@@ -24,6 +32,28 @@ type Choice struct {
 type Message struct {
 	Role    string `json:"role"`
 	Content string `json:"content"`
+}
+
+type Content interface{}
+
+type Img struct {
+	Role    string    `json:"role"`
+	Content []Content `json:"content"`
+}
+
+type TextContent struct {
+	Type string `json:"type"`
+	Text string `json:"text"`
+}
+
+type ImageContent struct {
+	Type     string   `json:"type"`
+	ImageURL ImageURL `json:"image_url"`
+}
+
+type ImageURL struct {
+	Url    string `json:"url"`
+	Detail string `json:"detail"`
 }
 
 type Usage struct {

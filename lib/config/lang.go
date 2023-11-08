@@ -147,7 +147,7 @@ func loadLang() {
 			LongResponse:        "AIの生成した文章が長すぎました。指示を変更してもう一度お試しください。",
 			TimeOut:             "要求がタイムアウトしました。もう一度お試しください。",
 			CantReply:           "エラーへの返信はできません。",
-			NoDetail:            "highかlowのみ選択できます。",
+			NoDetail:            "`-d`の値はhighかlowのみです。。",
 			NoImage:             "画像が入力されていません。",
 			NoSupportimage:      "その画像形式は対応していません。",
 			NoUrl:               "URLを入力してください。",

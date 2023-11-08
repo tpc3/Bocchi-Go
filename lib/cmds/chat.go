@@ -16,6 +16,8 @@ import (
 	"time"
 	"unicode/utf8"
 
+	_ "golang.org/x/image/webp"
+
 	"github.com/bwmarrin/discordgo"
 	"github.com/tpc3/Bocchi-Go/lib/chat"
 	"github.com/tpc3/Bocchi-Go/lib/config"
@@ -95,11 +97,6 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 			return
 		}
 
-		if !strings.Contains(imgurl, ".png") && !strings.Contains(imgurl, ".jpg") && !strings.Contains(imgurl, ".jpeg") && !strings.Contains(imgurl, ".gif") && !strings.Contains(imgurl, ".webp") {
-			ErrorReply(session, orgMsg, config.Lang[config.CurrentConfig.Guild.Lang].Error.NoSupportimage)
-			return
-		}
-
 		resp, err := http.Get(imgurl)
 		if err != nil {
 			if strings.Contains(err.Error(), "no such host") {
@@ -113,6 +110,21 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 			ErrorReply(session, orgMsg, config.Lang[config.CurrentConfig.Guild.Lang].Error.BrokenLink)
 			return
 		}
+		imageConfig, imageType, err := image.DecodeConfig(resp.Body)
+		if err != nil {
+			if strings.Contains(err.Error(), "unknown format") {
+				ErrorReply(session, orgMsg, config.Lang[config.CurrentConfig.Guild.Lang].Error.NoSupportimage)
+				return
+			}
+			log.Panic("Faild to decode: ", err)
+		}
+
+		if imageType != "png" && imageType != "jpeg" && imageType != "webp" && imageType != "gif" {
+			ErrorReply(session, orgMsg, config.Lang[config.CurrentConfig.Guild.Lang].Error.NoSupportimage)
+			return
+		}
+
+		log.Print(imageType)
 
 		model = "gpt-4-vision-preview"
 
@@ -142,10 +154,6 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 		if detail == "low" {
 			detcost = 85
 		} else if detail == "high" {
-			imageConfig, _, err := image.DecodeConfig(resp.Body)
-			if err != nil {
-				log.Panic("Faild to decode: ", err)
-			}
 
 			width := imageConfig.Width
 			height := imageConfig.Height

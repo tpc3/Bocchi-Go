@@ -99,6 +99,21 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 			ErrorReply(session, orgMsg, config.Lang[config.CurrentConfig.Guild.Lang].Error.NoSupportimage)
 			return
 		}
+
+		resp, err := http.Get(imgurl)
+		if err != nil {
+			if strings.Contains(err.Error(), "no such host") {
+				ErrorReply(session, orgMsg, config.Lang[config.CurrentConfig.Guild.Lang].Error.BrokenLink)
+				return
+			}
+			log.Panic("Failed to get image: ", err)
+		}
+		defer resp.Body.Close()
+		if resp.StatusCode != 200 {
+			ErrorReply(session, orgMsg, config.Lang[config.CurrentConfig.Guild.Lang].Error.BrokenLink)
+			return
+		}
+
 		model = "gpt-4-vision-preview"
 
 		if filter {
@@ -127,15 +142,6 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 		if detail == "low" {
 			detcost = 85
 		} else if detail == "high" {
-			resp, err := http.Get(imgurl)
-			if err != nil {
-				log.Panic("Failed to get image: ", err)
-			}
-			defer resp.Body.Close()
-			if resp.StatusCode != 200 {
-				ErrorReply(session, orgMsg, config.Lang[config.CurrentConfig.Guild.Lang].Error.BrokenLink)
-			}
-
 			imageConfig, _, err := image.DecodeConfig(resp.Body)
 			if err != nil {
 				log.Panic("Faild to decode: ", err)

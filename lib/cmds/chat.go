@@ -54,6 +54,11 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 
 	msgChain := []chat.Message{{Role: "user", Content: content}}
 
+	// Temporary model change
+	if cmodel && model == "gpt-4" {
+		model = "gpt-4-1106-preview"
+	}
+
 	if filter {
 		if orgMsg.ReferencedMessage != nil {
 			filterMsg, err := session.State.Message(orgMsg.ChannelID, orgMsg.ReferencedMessage.ID)
@@ -219,7 +224,8 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 				if loopTargetMsg.Embeds[0].Color == embed.ColorGPT3 {
 					model = "gpt-3.5-turbo"
 				} else if loopTargetMsg.Embeds[0].Color == embed.ColorGPT4 {
-					model = "gpt-4"
+					// Temporary model change
+					model = "gpt-4-1106-preview"
 				} else {
 					ErrorReply(session, orgMsg, config.Lang[config.CurrentConfig.Guild.Lang].Error.CantReply)
 				}

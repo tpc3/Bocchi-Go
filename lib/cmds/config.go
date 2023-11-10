@@ -96,7 +96,18 @@ func ConfigCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guil
 			return
 		}
 	case "model":
-		if split[1] != "gpt-4" && split[1] != "gpt-4-32k" && split[1] != "gpt-3.5-turbo" {
+		isValidModel := false
+		validModels := [...] string{
+			"gpt-3.5-turbo", "gpt-3.5-turbo-instruct", "gpt-3.5-turbo-1106", 
+			"gpt-4", "gpt-4-32k", "gpt-4-1106-preview", "gpt-4-vision-preview",
+		}
+		for _, model := range validModels {
+			if split[1] == model {
+				isValidModel = true
+				break
+			}
+		}
+		if !isValidModel {
 			ErrorReply(session, orgMsg, "unsupported models")
 			return
 		} else {

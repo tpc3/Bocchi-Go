@@ -42,11 +42,6 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 
 	content, repnum, tmpnum, topnum, systemstr, model, cmodel, filter, imgurl, detail := splitMsg(msg, guild)
 
-	if content == "" {
-		ErrorReply(session, orgMsg, config.Lang[config.CurrentConfig.Guild.Lang].Error.SubCmd)
-		return
-	}
-
 	if strings.Contains(strings.ReplaceAll(*msg, content, ""), "-d") && !strings.Contains(strings.ReplaceAll(*msg, content, ""), "-i") {
 		ErrorReply(session, orgMsg, config.Lang[config.CurrentConfig.Guild.Lang].Error.NoImage)
 		return
@@ -86,6 +81,11 @@ func ChatCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 
 		response, err := chat.GptRequest(&msgChain, data, guild, topnum, tmpnum, model, detcost)
 		SendDiscord(session, orgMsg, guild, msg, data, response, err, start, filter, content, model)
+		return
+	}
+
+	if content == "" {
+		ErrorReply(session, orgMsg, config.Lang[config.CurrentConfig.Guild.Lang].Error.SubCmd)
 		return
 	}
 
